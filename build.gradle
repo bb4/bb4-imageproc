@@ -1,29 +1,30 @@
-description = '<description of your project>'
+description = 'Scala Java2D demos'
 group = 'com.barrybecker4'
-version = '1.0-SNAPSHOT'
+version = '1.2'
 
 apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4.gradle'
 
-project.archivesBaseName = 'bb4-project-template'
-mainClassName = 'com.barrybecker4.newpackage.HelloWorld'
+project.archivesBaseName = 'bb4-imageproc'
+mainClassName = 'com.barrybecker4.java2d.imageproc.FilterSamplerApp'
+// mainClassName = "com.barrybecker4.java2d.ui.RightSizer"
 
-
-task runHelloWorld(type: JavaExec, dependsOn: classes) {
-    group = 'application'
-    main = 'com.barrybecker4.newpackage.HelloWorld'
-    classpath = sourceSets.main.runtimeClasspath
-}
 
 dependencies {
-    compile 'com.barrybecker4:bb4-ui:1.5-SNAPSHOT'
+    compile 'com.barrybecker4:bb4-optimization:1.5-SNAPSHOT'
+    compile fileTree(dir: 'lib', include: 'jhlabs-1.0.3.jar')
 }
 
+
+// not everything is included. There are a lot of examples that we do not need in the deployed jar.
 jar {
-    archiveName = "${archivesBaseName}-${version}.jar"
+    archiveName = 'bb4-imageproc-' + version + '.jar'
+    include 'com/barrybecker4/java2d/imageproc/**/*.class'
+    include 'com/barrybecker4/java2d/ui/**/*.class'
+    include 'com/barrybecker4/java2d/*.class'
     manifest {
-        attributes 'Implementation-Title': '<project code>',
+        attributes 'Implementation-Title': 'Java2d library (based on code from Java 2D by J. Knudsen)',
                 'Implementation-Version': version,
-                'provider': 'gradle',
+                provider: 'gradle',
                 'Main-Class': mainClassName
     }
 }
