@@ -6,8 +6,6 @@ import com.barrybecker4.ui.application.ApplicationFrame
 import java.awt._
 import java.awt.image.BandCombineOp
 import java.awt.image.BufferedImage
-import java.awt.image.Raster
-import java.awt.image.WritableRaster
 
 
 /**
