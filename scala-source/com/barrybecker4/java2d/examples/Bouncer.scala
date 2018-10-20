@@ -17,16 +17,16 @@ import com.barrybecker4.ui.util.Log
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
 object Bouncer {
-  val ANTIALIASING = 0
-  val GRADIENT = 1
-  val OUTLINE = 2
-  val TRANSFORM = 3
-  val DOTTED = 4
-  val AXES = 5
-  val CLIP = 6
-  val SPEED = 3
-  val NUM_BALLS = 20
-  val GRAVITY = .3f
+  private val ANTIALIASING = 0
+  private val GRADIENT = 1
+  private val OUTLINE = 2
+  private val TRANSFORM = 3
+  private val DOTTED = 4
+  private val AXES = 5
+  private val CLIP = 6
+  private val SPEED = 3
+  private val NUM_BALLS = 20
+  private val GRAVITY = .3f
 
   def main(args: Array[String]): Unit = {
     val bouncer = new Bouncer
