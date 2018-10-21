@@ -1,7 +1,10 @@
-package com.barrybecker4.java2d.spaceinvaders
+package com.barrybecker4.java2d.spaceinvaders.entity
+
+import com.barrybecker4.java2d.spaceinvaders.Game
 
 /**
   * The entity that represents the players ship
+ *
   * @param game The game in which the ship is being created
   * @param ref  The reference to the sprite to show for the ship
   * @param x    The initial x location of the player's ship

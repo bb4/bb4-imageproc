@@ -1,7 +1,10 @@
-package com.barrybecker4.java2d.spaceinvaders
+package com.barrybecker4.java2d.spaceinvaders.entity
+
+import com.barrybecker4.java2d.spaceinvaders.Game
 
 /**
   * An entity which represents one of our space invader aliens.
+ *
   * @param game The game in which this entity is being created
   * @param ref  The sprite which should be displayed for this alien
   * @author Kevin Glass

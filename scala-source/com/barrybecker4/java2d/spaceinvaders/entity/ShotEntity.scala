@@ -1,7 +1,10 @@
-package com.barrybecker4.java2d.spaceinvaders
+package com.barrybecker4.java2d.spaceinvaders.entity
+
+import com.barrybecker4.java2d.spaceinvaders.Game
 
 /**
   * An entity representing a shot fired by the player's ship
+ *
   * @param game The game in which the shot has been created
   * @param sprite The sprite representing this shot
   * @param x      The initial x location of the shot

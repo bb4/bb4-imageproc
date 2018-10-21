@@ -1,7 +1,8 @@
-package com.barrybecker4.java2d.spaceinvaders
+package com.barrybecker4.java2d.spaceinvaders.entity
 
-import java.awt.Graphics
-import java.awt.Rectangle
+import java.awt.{Graphics, Rectangle}
+
+import com.barrybecker4.java2d.spaceinvaders.{Sprite, SpriteStore}
 
 
 /**

@@ -4,11 +4,10 @@ import java.awt.Canvas
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Graphics2D
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.image.BufferStrategy
+import com.barrybecker4.java2d.spaceinvaders.entity.{AlienEntity, Entity, ShipEntity, ShotEntity}
 import javax.swing.JFrame
 import javax.swing.JPanel
 
@@ -16,9 +15,8 @@ import javax.swing.JPanel
 /**
   * This class with both act as a manager for the display and central mediator for the game logic.
   *
-  * Display management will consist of a loop that cycles round all entities in the game asking them to move and then
-  * drawing them in the appropriate place. With the help of an inner class it will also allow the player to control
-  * the main ship.
+  * Display management will consist of a loop that cycles over all entities in the game asking them to move, and then
+  * drawing them in the appropriate place. The KeyInputHandler class allows the player to control the main ship.
   *
   * As a mediator it will be informed when entities within our game detect events (e.g. alien killed, played died)
   * and will take appropriate game actions.
@@ -58,14 +56,8 @@ class Game() extends Canvas {
   private var alienCount = 0
   /** The message to display which waiting for a key press */
   private var message = ""
-  /** True if we're holding up game play until a key has been pressed */
-  private var waitingForKeyPress = true
-  /** True if the left cursor key is currently pressed */
-  private var leftPressed = false
-  /** True if the right cursor key is currently pressed */
-  private var rightPressed = false
-  /** True if we are firing */
-  private var firePressed = false
+  /** Handlers user key input */
+  private val keyHandler = new KeyInputHandler()
   /** True if game logic needs to be applied this loop, normally as a result of a game event */
   private var logicRequiredThisLoop = false
 
@@ -90,33 +82,26 @@ class Game() extends Canvas {
   })
   // add a key input system (defined below) to our canvas
   // so we can respond to key pressed
-  addKeyListener(new KeyInputHandler)
+  addKeyListener(keyHandler)
   // request the focus so key events come to us
   requestFocus()
   // create the buffering strategy which will allow AWT
   // to manage our accelerated graphics
   createBufferStrategy(2)
   strategy = getBufferStrategy
-  // initialise the entities in our game so there's something
-  // to see at startup
+  // initialise the entities in our game so there's somethingto see at startup
   initEntities()
 
-  /**
-    * Start a fresh game, this should clear out any old data and
-    * create a new set.
-    */
-  private def startGame(): Unit = { // clear out any existing entities and intialise a new set
+  /** Start a fresh game, this should clear out any old data andcreate a new set. */
+  private def startGame(): Unit = { // clear out any existing entities and intialize a new set
     entities = Seq()
     initEntities()
     // blank out any keyboard settings we might currently have
-    leftPressed = false
-    rightPressed = false
-    firePressed = false
+    keyHandler.reset()
   }
 
-  /**
-    * Initialise the starting state of the entities (ship and aliens). Each
-    * entitiy will be added to the overall list of entities in the game.
+  /** Initialise the starting state of the entities (ship and aliens).
+    * EAah entity will be added to the overall list of entities in the game.
     */
   private def initEntities(): Unit = { // create the player ship and place it roughly in the center of the screen
     ship = new ShipEntity(this, "sprites/ship.gif", 370, 550)
@@ -151,27 +136,23 @@ class Game() extends Canvas {
   /** Notification that the player has died. */
   def notifyDeath(): Unit = {
     message = "Oh no! They got you, try again?"
-    waitingForKeyPress = true
+    keyHandler.waitingForKeyPress = true
   }
 
   /** Notification that the player has won since all the aliensare dead. */
   def notifyWin(): Unit = {
     message = "Well done! You Win!"
-    waitingForKeyPress = true
+    keyHandler.waitingForKeyPress = true
   }
 
   /** Notification that an alien has been killed */
-  def notifyAlienKilled(): Unit = { // reduce the alient count, if there are none left, the player has won!
+  def notifyAlienKilled(): Unit = {
+    // reduce the alien count, if there are none left, the player has won!
     alienCount -= 1
     if (alienCount == 0) notifyWin()
-    // if there are still some aliens left then they all need to get faster, so
-    // speed up all the existing aliens
-    var i = 0
-    while (i < entities.size) {
-      val entity = entities(i)
-      entity.setHorizontalMovement(entity.getHorizontalMovement * 1.02)
-      i += 1
-    }
+    // if there are still some aliens left then they all need to get faster, so speed up all the existing aliens
+    for(e <- entities)
+      e.setHorizontalMovement(e.getHorizontalMovement * 1.05)
   }
 
   /** Attempt to fire a shot from the player. Its called "try"
@@ -199,142 +180,83 @@ class Game() extends Canvas {
     var lastLoopTime = System.currentTimeMillis
     // keep looping round til the game ends
     while (gameRunning) {
-      // work out how long its been since the last update, this
-      // will be used to calculate how far the entities should
-      // move this loop
+      // The time delta will be used to calculate how far the entities should move this iteration
       val delta = System.currentTimeMillis - lastLoopTime
       lastLoopTime = System.currentTimeMillis
-      // Get hold of a graphics context for the accelerated
-      // surface and blank it out
-      val g = strategy.getDrawGraphics.asInstanceOf[Graphics2D]
-      g.setColor(Color.black)
-      g.fillRect(0, 0, 800, 600)
-      // cycle round asking each entity to move itself
-      if (!waitingForKeyPress) {
-        var i = 0
-        while (i < entities.size) {
-          entities(i).move(delta)
-          i += 1
-        }
-      }
-      // cycle round drawing all the entities we have in the game
-      var i = 0
-      while (i < entities.size) {
-        entities(i).draw(g)
-        i += 1
-      }
-      // brute force collisions, compare every entity against
-      // every other entity. If any of them collide notify
-      // both entities that the collision has occured
-      var p = 0
-      while (p < entities.size) {
-        var s = p + 1
-        while (s < entities.size) {
-          val me = entities(p)
-          val him = entities(s)
-          if (me.collidesWith(him)) {
-            me.collidedWith(him)
-            him.collidedWith(me)
-          }
-          s += 1
-        }
-        p += 1
-      }
-      // remove any entity that has been marked for clear up
-      entities = entities.filter(e => !removeList.contains(e))
 
-      removeList = Set()
-      // if a game event has indicated that game logic should
-      // be resolved, cycle round every entity requesting that
-      // their personal logic should be considered.
-      if (logicRequiredThisLoop) {
-        var i = 0
-        while (i < entities.size) {
-          entities(i).doLogic()
-          i += 1
-        }
-        logicRequiredThisLoop = false
+      if (keyHandler.keyPressedToStart) {
+        startGame()
+        keyHandler.waitingForKeyPress = false
+      } else {
+        gameStep(delta)
       }
-      // if we're waiting for an "any key" press then draw the
-      // current message
-      if (waitingForKeyPress) {
-        g.setColor(Color.white)
-        g.drawString(message, (800 - g.getFontMetrics.stringWidth(message)) / 2, 250)
-        g.drawString("Press any key", (800 - g.getFontMetrics.stringWidth("Press any key")) / 2, 300)
-      }
-      // finally, we've completed drawing so clear up the graphics
-      // and flip the buffer over
-      g.dispose()
-      strategy.show()
-      // resolve the movement of the ship. First assume the ship
-      // isn't moving. If either cursor key is pressed then
-      // update the movement appropraitely
-      ship.setHorizontalMovement(0)
-      if (leftPressed && (!rightPressed)) ship.setHorizontalMovement(-moveSpeed)
-      else if (rightPressed && (!leftPressed)) ship.setHorizontalMovement(moveSpeed)
-      // if we're pressing fire, attempt to fire
-      if (firePressed) tryToFire()
-      // finally pause for a bit. Note: this should run us at about
-      // 100 fps but on windows this might vary each loop due to a bad implementation of timer
-      Thread.sleep(10)
+      // This should run us at about 100 fps.
+      // Thread.sleep(10)
     }
   }
 
-  /** A class to handle keyboard input from the user. The class
-    * handles both dynamic input during game play, i.e. left/right
-    * and shoot, and more static type input (i.e. press any key to
-    * continue)
-    *
-    * This has been implemented as an inner class more through
-    * habbit then anything else. Its perfectly normal to implement
-    * this as separate class if slight less convenient.
-    */
-  private class KeyInputHandler extends KeyAdapter {
-    /** The number of key presses we've had while waiting for an "any key" press */
-    private var pressCount = 1
+  def gameStep(timeStep: Long): Unit = {
 
-    /** Notification from AWT that a key has been pressed. Note that
-      * a key being pressed is equal to being pushed down but *NOT*
-      * released. Thats where keyTyped() comes in.
-      * @param e The details of the key that was pressed
-      */
-    override def keyPressed(e: KeyEvent): Unit = { // if we're waiting for an "any key" typed then we don't
-      // want to do anything with just a "press"
-      if (waitingForKeyPress) return
-      if (e.getKeyCode == KeyEvent.VK_LEFT) leftPressed = true
-      if (e.getKeyCode == KeyEvent.VK_RIGHT) rightPressed = true
-      if (e.getKeyCode == KeyEvent.VK_SPACE) firePressed = true
-    }
-
-    /** Notification from AWT that a key has been released.
-      * @param e The details of the key that was released
-      */
-    override def keyReleased(e: KeyEvent): Unit = { // want to do anything with just a "released"
-      if (waitingForKeyPress) return
-      if (e.getKeyCode == KeyEvent.VK_LEFT) leftPressed = false
-      if (e.getKeyCode == KeyEvent.VK_RIGHT) rightPressed = false
-      if (e.getKeyCode == KeyEvent.VK_SPACE) firePressed = false
-    }
-
-    /** Notification from AWT that a key has been typed. Note that
-      * typing a key means to both press and then release it.
-      * @param e The details of the key that was typed.
-      */
-    override def keyTyped(e: KeyEvent): Unit = { // if we're waiting for a "any key" type then
-      // check if we've recieved any recently. We may
-      // have had a keyType() event from the user releasing
-      // the shoot or move keys, hence the use of the "pressCount"
-      // counter.
-      if (waitingForKeyPress) if (pressCount == 1) { // since we've now recieved our key typed
-        // event we can mark it as such and start
-        // our new game
-        waitingForKeyPress = false
-        startGame()
-        pressCount = 0
+    // Get hold of a graphics context for the accelerated
+    // surface and blank it out
+    val g = strategy.getDrawGraphics.asInstanceOf[Graphics2D]
+    g.setColor(Color.black)
+    g.fillRect(0, 0, 800, 600)
+    // cycle round asking each entity to move itself
+    if (!keyHandler.waitingForKeyPress) {
+      var i = 0
+      while (i < entities.size) {
+        entities(i).move(timeStep)
+        i += 1
       }
-      else pressCount += 1
-      // if we hit escape, then quit the game
-      if (e.getKeyChar == 27) System.exit(0)
     }
+    // cycle round drawing all the entities we have in the game
+    var i = 0
+    while (i < entities.size) {
+      entities(i).draw(g)
+      i += 1
+    }
+
+    checkForCollisions()
+
+    // remove any entity that has been marked for clear up
+    entities = entities.filter(e => !removeList.contains(e))
+
+    removeList = Set()
+    // If a game event has indicated that game logic should be resolved, cycle round every entity requesting that
+    // their personal logic should be considered.
+    if (logicRequiredThisLoop) {
+      entities.foreach(e => e.doLogic())
+      logicRequiredThisLoop = false
+    }
+    // if we're waiting for an "any key" press then draw the current message
+    if (keyHandler.waitingForKeyPress) {
+      g.setColor(Color.white)
+      g.drawString(message, (800 - g.getFontMetrics.stringWidth(message)) / 2, 250)
+      g.drawString("Press any key", (800 - g.getFontMetrics.stringWidth("Press any key")) / 2, 300)
+    }
+    // finally, we've completed drawing so clear up the graphics and flip the buffer over
+    g.dispose()
+    strategy.show()
+    // Resolve the movement of the ship. Move to left or right if needed.
+    ship.setHorizontalMovement(0)
+    if (keyHandler.isLeftPressed) ship.setHorizontalMovement(-moveSpeed)
+    else if (keyHandler.isRightPressed) ship.setHorizontalMovement(moveSpeed)
+    // if we're pressing fire, attempt to fire
+    if (keyHandler.isFirePressed) tryToFire()
+  }
+
+  /** If the bullet or ship collide with any aliens, notify both entities that the collision has occurred. */
+  private def checkForCollisions(): Unit = {
+    val (aliens, friendlies) = entities.partition(_.isInstanceOf[AlienEntity])
+
+    friendlies.foreach(me => {
+      aliens.foreach(him => {
+        if (me.collidesWith(him)) {
+          me.collidedWith(him)
+          him.collidedWith(me)
+        }
+      })
+    })
   }
 }
