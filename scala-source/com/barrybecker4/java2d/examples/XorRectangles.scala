@@ -14,7 +14,6 @@ object XorRectangles extends App {
   val f = new ApplicationFrame("XOR Rectangles") {
 
     override def paint(g: Graphics): Unit = {
-      this.getContentPane.set
       val g2 = g.asInstanceOf[Graphics2D]
       // Set XOR mode, using white as the XOR color.
       g2.setXORMode(Color.white)
