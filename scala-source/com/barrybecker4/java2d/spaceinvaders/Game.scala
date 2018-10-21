@@ -97,7 +97,7 @@ class Game() extends Canvas {
     entities = Seq()
     initEntities()
     // blank out any keyboard settings we might currently have
-    keyHandler.reset()
+    //keyHandler.reset()
   }
 
   /** Initialise the starting state of the entities (ship and aliens).
@@ -136,13 +136,13 @@ class Game() extends Canvas {
   /** Notification that the player has died. */
   def notifyDeath(): Unit = {
     message = "Oh no! They got you, try again?"
-    keyHandler.waitingForKeyPress = true
+    keyHandler.reset()
   }
 
   /** Notification that the player has won since all the aliensare dead. */
   def notifyWin(): Unit = {
     message = "Well done! You Win!"
-    keyHandler.waitingForKeyPress = true
+    keyHandler.reset()
   }
 
   /** Notification that an alien has been killed */
@@ -168,13 +168,11 @@ class Game() extends Canvas {
   }
 
   /** The main game loop. Play is responsible for the following activities:
-    * <p>
     * - Working out the speed of the game loop to update moves
     * - Moving the game entities
     * - Drawing the screen contents (entities, text)
     * - Updating game events
     * - Checking Input
-    * <p>
     */
   def gameLoop(): Unit = {
     var lastLoopTime = System.currentTimeMillis
@@ -184,14 +182,9 @@ class Game() extends Canvas {
       val delta = System.currentTimeMillis - lastLoopTime
       lastLoopTime = System.currentTimeMillis
 
-      if (keyHandler.keyPressedToStart) {
+      if (keyHandler.isStarted)
         startGame()
-        keyHandler.waitingForKeyPress = false
-      } else {
-        gameStep(delta)
-      }
-      // This should run us at about 100 fps.
-      // Thread.sleep(10)
+      gameStep(delta)
     }
   }
 
@@ -203,19 +196,10 @@ class Game() extends Canvas {
     g.setColor(Color.black)
     g.fillRect(0, 0, 800, 600)
     // cycle round asking each entity to move itself
-    if (!keyHandler.waitingForKeyPress) {
-      var i = 0
-      while (i < entities.size) {
-        entities(i).move(timeStep)
-        i += 1
-      }
-    }
-    // cycle round drawing all the entities we have in the game
-    var i = 0
-    while (i < entities.size) {
-      entities(i).draw(g)
-      i += 1
-    }
+    if (!keyHandler.waitingForKeyPress)
+      for (e <- entities) e.move(timeStep)
+
+    for (e <- entities) e.draw(g)
 
     checkForCollisions()
 
