@@ -15,18 +15,9 @@ import javax.imageio.ImageIO
   * @author Kevin Glass
   */
 object SpriteStore {
-  /** The single instance of this class */
-    private val single = new SpriteStore
 
-  /** Get the single instance of this class
-    * @return The single instance of this class
-    */
-  def get: SpriteStore = single
-}
-
-class SpriteStore {
   /** The cached sprite map, from reference to sprite instance */
-    private var sprites: Map[String, Sprite] = Map()
+  private var sprites: Map[String, Sprite] = Map()
 
   /** Retrieve a sprite from the store
     * @param ref The reference to the image to use for the sprite

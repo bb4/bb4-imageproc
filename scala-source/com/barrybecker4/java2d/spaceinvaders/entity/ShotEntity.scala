@@ -1,10 +1,15 @@
 package com.barrybecker4.java2d.spaceinvaders.entity
 
 import com.barrybecker4.java2d.spaceinvaders.Game
+import ShotEntity.MOVE_SPEED
 
+object ShotEntity {
+  /** The vertical speed at which the players shot moves */
+  private val MOVE_SPEED = -300
+}
 /**
   * An entity representing a shot fired by the player's ship
- *
+  *
   * @param game The game in which the shot has been created
   * @param sprite The sprite representing this shot
   * @param x      The initial x location of the shot
@@ -14,18 +19,18 @@ import com.barrybecker4.java2d.spaceinvaders.Game
 class ShotEntity(/** The game in which this entity exists */
                  var game: Game, sprite: String, x: Int, y: Int) extends Entity(sprite, x, y) {
 
-  /** The vertical speed at which the players shot moves */
-  private val moveSpeed = -300
-  /** True if this shot has been "used", i.e. its hit something */
+
+  /** True if this shot has been "used". i.e. it hit something */
   private var used = false
-  dy = moveSpeed
+
+  dy = MOVE_SPEED
 
   /** Request that this shot moved based on time elapsed
     * @param delta The time that has elapsed since last move
     */
   override def move(delta: Long): Unit = { // proceed with normal move
     super.move(delta)
-    // if we shot off the screen, remove ourselfs
+    // if we shot off the screen, remove ourselves
     if (y < -100) game.removeEntity(this)
   }
 

@@ -1,10 +1,11 @@
 package com.barrybecker4.java2d.spaceinvaders.entity
 
 import com.barrybecker4.java2d.spaceinvaders.Game
+import com.barrybecker4.java2d.spaceinvaders.GameConstants._
 
 /**
   * The entity that represents the players ship
- *
+  *
   * @param game The game in which the ship is being created
   * @param ref  The reference to the sprite to show for the ship
   * @param x    The initial x location of the player's ship
@@ -20,7 +21,7 @@ class ShipEntity(var game: Game, ref: String, x: Int, y: Int) extends Entity(ref
     // of the screen, don't move
     if ((dx < 0) && (x < 10)) return
     // if we're moving right and have reached the right hand side
-    if ((dx > 0) && (x > 750)) return
+    if ((dx > 0) && (x > SCREEN_WIDTH - 50)) return
     super.move(delta)
   }
 

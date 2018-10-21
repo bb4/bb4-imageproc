@@ -10,10 +10,10 @@ import java.awt.image.BufferStrategy
 import com.barrybecker4.java2d.spaceinvaders.entity.{AlienEntity, Entity, ShipEntity, ShotEntity}
 import javax.swing.JFrame
 import javax.swing.JPanel
-
+import com.barrybecker4.java2d.spaceinvaders.GameConstants._
 
 /**
-  * This class with both act as a manager for the display and central mediator for the game logic.
+  * This class with act as a manager for the display mediator for the game logic.
   *
   * Display management will consist of a loop that cycles over all entities in the game asking them to move, and then
   * drawing them in the appropriate place. The KeyInputHandler class allows the player to control the main ship.
@@ -25,33 +25,22 @@ import javax.swing.JPanel
   * @author Barry Becker (ported it to Scala)
   */
 object Game extends App {
-  // Entry point into the game. Simply create an instance of class which will start the display and game loop.
   val g = new Game
-  // Start the main game loop. This method will not return until the game has finished running.
-  // Hence we are using the actual main thread to run the game.
-  g.gameLoop()
 }
 
 class Game() extends Canvas {
-  // create a frame to contain our game
   val container = new JFrame("Space Invaders 101")
 
-  /** The stragey that allows us to use accelerate page flipping */
-  private var strategy: BufferStrategy = _
-  /** True if the game is currently "running", i.e. the game loop is looping */
-  private val gameRunning = true
+  /** The strategy that allows us to use accelerate page flipping */
+  private var bufStrategy: BufferStrategy = _
   /** The list of all the entities that exist in our game */
   private var entities: Seq[Entity] = Seq()
   /** The list of entities that need to be removed from the game this loop */
   private var removeList: Set[Entity] = Set()
   /** The entity representing the player */
   private var ship: Entity = _
-  /** The speed at which the player's ship should move (pixels/sec) */
-  private val moveSpeed = 300
   /** The time at which last fired a shot */
   private var lastFire: Long = 0
-  /** The interval between our players shot (ms) */
-  private val firingInterval = 500
   /** The number of aliens left on the screen */
   private var alienCount = 0
   /** The message to display which waiting for a key press */
@@ -63,12 +52,12 @@ class Game() extends Canvas {
 
   // get hold the content of the frame and set up the resolution of the game
   val panel: JPanel = container.getContentPane.asInstanceOf[JPanel]
-  panel.setPreferredSize(new Dimension(800, 600))
+  panel.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT))
   panel.setLayout(null)
   // setup our canvas size and put it into the content of the frame
-  setBounds(0, 0, 800, 600)
+  setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
   panel.add(this)
-  // Tell AWT not to bother repainting our canvas since we're going to do that our self in accelerated mode.
+  // Tell AWT not to bother repainting our canvas since we're going to do that ourselves in accelerated mode.
   setIgnoreRepaint(true)
   container.pack()
   container.setResizable(false)
@@ -88,24 +77,17 @@ class Game() extends Canvas {
   // create the buffering strategy which will allow AWT
   // to manage our accelerated graphics
   createBufferStrategy(2)
-  strategy = getBufferStrategy
-  // initialise the entities in our game so there's somethingto see at startup
-  initEntities()
+  bufStrategy = getBufferStrategy
+  initEntities()  // so we see something initially
+  gameLoop()  // loop forever
 
-  /** Start a fresh game, this should clear out any old data andcreate a new set. */
-  private def startGame(): Unit = { // clear out any existing entities and intialize a new set
-    entities = Seq()
-    initEntities()
-    // blank out any keyboard settings we might currently have
-    //keyHandler.reset()
-  }
 
   /** Initialise the starting state of the entities (ship and aliens).
     * EAah entity will be added to the overall list of entities in the game.
     */
   private def initEntities(): Unit = { // create the player ship and place it roughly in the center of the screen
-    ship = new ShipEntity(this, "sprites/ship.gif", 370, 550)
-    entities :+= ship
+    ship = new ShipEntity(this, "sprites/ship.gif", 370, SCREEN_HEIGHT - 50)
+    entities = Seq(ship)
     // create a block of aliens (5 rows, by 12 aliens, spaced evenly)
     alienCount = 0
     var row = 0
@@ -152,7 +134,7 @@ class Game() extends Canvas {
     if (alienCount == 0) notifyWin()
     // if there are still some aliens left then they all need to get faster, so speed up all the existing aliens
     for(e <- entities)
-      e.setHorizontalMovement(e.getHorizontalMovement * 1.05)
+      e.setHorizontalMovement(e.getHorizontalMovement * SPEEDUP_FACTOR)
   }
 
   /** Attempt to fire a shot from the player. Its called "try"
@@ -160,7 +142,7 @@ class Game() extends Canvas {
     * point, i.e. has he/she waited long enough between shots
     */
   def tryToFire(): Unit = { // check that we have waiting long enough to fire
-    if (System.currentTimeMillis - lastFire < firingInterval) return
+    if (System.currentTimeMillis - lastFire < FIRING_INTERVAL) return
     // if we waited long enough, create the shot entity, and record the time.
     lastFire = System.currentTimeMillis
     val shot = new ShotEntity(this, "sprites/shot.gif", ship.getX + 10, ship.getY - 30)
@@ -177,13 +159,13 @@ class Game() extends Canvas {
   def gameLoop(): Unit = {
     var lastLoopTime = System.currentTimeMillis
     // keep looping round til the game ends
-    while (gameRunning) {
+    while (true) {
       // The time delta will be used to calculate how far the entities should move this iteration
       val delta = System.currentTimeMillis - lastLoopTime
       lastLoopTime = System.currentTimeMillis
 
       if (keyHandler.isStarted)
-        startGame()
+        initEntities()
       gameStep(delta)
     }
   }
@@ -192,9 +174,9 @@ class Game() extends Canvas {
 
     // Get hold of a graphics context for the accelerated
     // surface and blank it out
-    val g = strategy.getDrawGraphics.asInstanceOf[Graphics2D]
+    val g = bufStrategy.getDrawGraphics.asInstanceOf[Graphics2D]
     g.setColor(Color.black)
-    g.fillRect(0, 0, 800, 600)
+    g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
     // cycle round asking each entity to move itself
     if (!keyHandler.waitingForKeyPress)
       for (e <- entities) e.move(timeStep)
@@ -216,16 +198,16 @@ class Game() extends Canvas {
     // if we're waiting for an "any key" press then draw the current message
     if (keyHandler.waitingForKeyPress) {
       g.setColor(Color.white)
-      g.drawString(message, (800 - g.getFontMetrics.stringWidth(message)) / 2, 250)
-      g.drawString("Press any key", (800 - g.getFontMetrics.stringWidth("Press any key")) / 2, 300)
+      g.drawString(message, (SCREEN_WIDTH - g.getFontMetrics.stringWidth(message)) / 2, 250)
+      g.drawString("Press any key", (SCREEN_WIDTH - g.getFontMetrics.stringWidth("Press any key")) / 2, 300)
     }
     // finally, we've completed drawing so clear up the graphics and flip the buffer over
     g.dispose()
-    strategy.show()
+    bufStrategy.show()
     // Resolve the movement of the ship. Move to left or right if needed.
     ship.setHorizontalMovement(0)
-    if (keyHandler.isLeftPressed) ship.setHorizontalMovement(-moveSpeed)
-    else if (keyHandler.isRightPressed) ship.setHorizontalMovement(moveSpeed)
+    if (keyHandler.isLeftPressed) ship.setHorizontalMovement(-MOVE_SPEED)
+    else if (keyHandler.isRightPressed) ship.setHorizontalMovement(MOVE_SPEED)
     // if we're pressing fire, attempt to fire
     if (keyHandler.isFirePressed) tryToFire()
   }

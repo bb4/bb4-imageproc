@@ -6,15 +6,12 @@ import com.barrybecker4.java2d.spaceinvaders.{Sprite, SpriteStore}
 
 
 /**
-  * An entity represents any element that appears in the game. The
-  * entity is responsible for resolving collisions and movement
+  * Any element that appears in the game. Responsible for resolving collisions and movement
   * based on a set of properties defined either by subclass or externally.
   *
-  * Note that doubles are used for positions. This may seem strange
+  * Note that doubles are used for positions to maintain accuracy. This may seem strange
   * given that pixels locations are integers. However, using double means
-  * that an entity can move a partial pixel. It doesn't of course mean that
-  * they will be display half way through a pixel but allows us not lose
-  * accuracy as we move.
+  * that an entity can move a partial pixel.
   *
   * @param ref The reference to the image to be displayed for this entity
   * @param x   The initial x location of this entity
@@ -22,7 +19,8 @@ import com.barrybecker4.java2d.spaceinvaders.{Sprite, SpriteStore}
   * @author Kevin Glass
   */
 abstract class Entity(val ref: String, var x: Double, var y: Double) {
-  this.sprite = SpriteStore.get.getSprite(ref)
+
+  this.sprite = SpriteStore.getSprite(ref)
   /** The sprite that represents this entity */
   protected var sprite: Sprite = _
   /** The current speed of this entity horizontally (pixels/sec) */
@@ -34,11 +32,11 @@ abstract class Entity(val ref: String, var x: Double, var y: Double) {
   /** The rectangle used for other entities during collision resolution */
   private val him = new Rectangle
 
-  /** Request that this entity move itself based on a certain ammount
-    * of time passing.
+  /** Request that this entity move itself based on a certain amount
+    * of time passing. Update the location of the entity based on move speeds.
     * @param delta The amount of time that has passed in milliseconds
     */
-  def move(delta: Long): Unit = { // update the location of the entity based on move speeds
+  def move(delta: Long): Unit = {
     x += (delta * dx) / 1000
     y += (delta * dy) / 1000
   }
