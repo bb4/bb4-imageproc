@@ -14,4 +14,7 @@ object GameConstants {
   /** The amount to speed the aliens everytime one of their number is killed */
   val SPEEDUP_FACTOR = 1.05
 
+  val ALIEN_ROWS = 5
+  val ALIEN_COLS = 12
 }
+

@@ -91,9 +91,9 @@ class Game() extends Canvas {
     // create a block of aliens (5 rows, by 12 aliens, spaced evenly)
     alienCount = 0
     var row = 0
-    while (row < 5) {
+    while (row < ALIEN_ROWS) {
       var x = 0
-      while (x < 12) {
+      while (x < ALIEN_COLS) {
         val alien = new AlienEntity(this, "sprites/alien.gif", 100 + (x * 50), 50 + row * 30)
         entities :+= alien
         alienCount += 1
