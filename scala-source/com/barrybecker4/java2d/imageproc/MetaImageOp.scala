@@ -3,9 +3,7 @@ package com.barrybecker4.java2d.imageproc
 import java.awt.image.BufferedImageOp
 import java.lang.reflect.Method
 import java.util.logging.{Level, Logger}
-
 import com.barrybecker4.optimization.parameter.types.Parameter
-
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
@@ -87,7 +85,6 @@ class MetaImageOp {
       println("methodName = " + methodName + " pType = " + p.getType)
       val method: Method = filter.getClass.getDeclaredMethod(methodName, p.getType)
 
-      val args: Array[Any] = new Array(1)
       val param: Parameter = p.copy
       if (randomVariance > 0) param.tweakValue(randomVariance, MetaImageOp.RANDOM)
       println("tweaked min = " + param.minValue + " max = " + param.maxValue + "  v = " + param.getValue)
@@ -96,15 +93,19 @@ class MetaImageOp {
       // @@ This should work with autoboxing, but does not for some reason, so we resort to ugly case statement.
       //args[0] = param.getNaturalValue();
       val paramType: Class[_] = param.getType
-      if (paramType == classOf[Float]) args(0) = param.getValue.toFloat
-      else if (paramType == classOf[Int]) args(0) = param.getValue.toInt
-      else if (paramType == classOf[Boolean]) args(0) = param.getNaturalValue.asInstanceOf[Boolean]
-        else if (paramType == classOf[String]) args(0) = param.getNaturalValue.asInstanceOf[String]
-          else throw new IllegalArgumentException("Unexpected param type = " + paramType)
+      val arg =
+        if (paramType == classOf[Float]) Array(param.getValue.toFloat)
+        else if (paramType == classOf[Int]) Array(param.getValue.toInt)
+        else if (paramType == classOf[Boolean]) Array(param.getNaturalValue.asInstanceOf[Boolean])
+        else if (paramType == classOf[String]) Array(param.getNaturalValue.asInstanceOf[String])
+        else throw new IllegalArgumentException("Unexpected param type = " + paramType)
+
       println("paramType = " + paramType)
-      println("param val = " + args(0))
-      method.invoke(filter, args) // p.getInformation().cast(p.getValue()));
+      println("param val = " + arg.mkString(","))
+      // Currently getting IllegalArgumentException because passing Float, but wanting float.
+      // Hopefully this will work in some future version of scala
+      method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
     }
-    newParams.toSeq
+    newParams
   }
 }
