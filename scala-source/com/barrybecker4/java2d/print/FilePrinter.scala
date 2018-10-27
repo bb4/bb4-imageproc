@@ -41,15 +41,15 @@ class FilePrinter() extends JFrame("FilePrinter v1.0") {
     // Add the menu bar.
     val mb = new JMenuBar
     val file = new JMenu("File", true)
-    file.add(new FilePrinter#FileOpenAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK))
-    file.add(new FilePrinter#FilePrintAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK))
-    file.add(new FilePrinter#FilePageSetupAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK | Event.SHIFT_MASK))
+    file.add(new FileOpenAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK))
+    file.add(new FilePrintAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK))
+    file.add(new FilePageSetupAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Event.CTRL_MASK | Event.SHIFT_MASK))
     file.addSeparator()
     file.add(new FilePrinter.FileQuitAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.CTRL_MASK))
     mb.add(file)
     val page = new JMenu("Page", true)
-    page.add(new FilePrinter#PageNextPageAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0))
-    page.add(new FilePrinter#PagePreviousPageAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0))
+    page.add(new PageNextPageAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0))
+    page.add(new PagePreviousPageAction).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0))
     mb.add(page)
     setJMenuBar(mb)
     // Add the contents of the window.

@@ -39,9 +39,9 @@ class SwingPrinter() extends JFrame("SwingPrinter v1.0") {
     // Add the menu bar.
     val mb = new JMenuBar
     val file = new JMenu("File", true)
-    file.add(new SwingPrinter#FilePrintAction)
+    file.add(new FilePrintAction)
       .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK))
-    file.add(new SwingPrinter#FilePageSetupAction)
+    file.add(new FilePageSetupAction)
       .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK))
     file.addSeparator()
     file.add(new SwingPrinter.FileQuitAction)
