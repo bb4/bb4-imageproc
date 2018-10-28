@@ -14,10 +14,10 @@ import scala.io.Source
 class FilePageRenderer(val file: File, val pageFormat: PageFormat)
   extends JComponent with Printable {
 
-  mFontSize = 12
-  mFont = new Font("Serif", Font.PLAIN, mFontSize)
+  private var mFontSize: Int = 12
+  private val mFont: Font = new Font("Serif", Font.PLAIN, mFontSize)
   private val source = Source.fromFile(file)
-  private var lines: Iterator[String] = source.getLines
+  private val lines: Iterator[String] = source.getLines
   source.close()
 
   // Now paginate, based on the PageFormat.
@@ -29,8 +29,7 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
     * a Vector containing Strings that are the lines for a particular page.
     */
   private var pages: util.Vector[util.Vector[String]] = _
-  private var mFont: Font = _
-  private var mFontSize: Int = 0
+
 
   def paginate(pageFormat: PageFormat): Unit = {
     currentPage = 0
@@ -50,14 +49,15 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
     // Add the last page.
     if (page.size > 0) pages.addElement(page)
     // Set our preferred size based on the PageFormat.
-    this.setPreferredSize(new Dimension(pageFormat.getImageableWidth.toInt, pageFormat.getImageableHeight.toInt))
+    this.setPreferredSize(
+      new Dimension(pageFormat.getImageableWidth.toInt, pageFormat.getImageableHeight.toInt))
     repaint()
   }
 
   override def paintComponent(g: Graphics): Unit = {
     val g2: Graphics2D = g.asInstanceOf[Graphics2D]
     // Make the background white.
-    val r: Rectangle2D = new Rectangle2D.Float(0, 0, preferredSize.width, preferredSize.height)
+    val r: Rectangle2D = new Rectangle2D.Float(0, 0, getPreferredSize.width, getPreferredSize.height)
     g2.setPaint(Color.white)
     g2.fill(r)
     // Get the current page.
@@ -86,8 +86,6 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
     currentPage = savedPage
     Printable.PAGE_EXISTS
   }
-
-  override def getPreferredSize: Dimension = preferredSize
 
   def getCurrentPage: Int = currentPage
   def getNumPages: Int = pages.size

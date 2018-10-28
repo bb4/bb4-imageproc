@@ -1,6 +1,6 @@
 description = 'Scala Java2D demos'
 group = 'com.barrybecker4'
-version = '1.2'
+version = '1.3-SNAPSHOT'
 
 apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4.gradle'
 

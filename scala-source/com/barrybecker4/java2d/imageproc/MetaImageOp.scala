@@ -1,3 +1,4 @@
+/** Copyright by Barry G. Becker, 2011-2018. Licensed under MIT License: http://www.opensource.org/licenses/MIT  */
 package com.barrybecker4.java2d.imageproc
 
 import java.awt.image.BufferedImageOp

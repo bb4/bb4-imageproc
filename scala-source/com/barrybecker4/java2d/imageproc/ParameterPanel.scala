@@ -1,6 +1,6 @@
+/** Copyright by Barry G. Becker, 2011-2018. Licensed under MIT License: http://www.opensource.org/licenses/MIT  */
 package com.barrybecker4.java2d.imageproc
 
-import java.util
 import com.barrybecker4.optimization.parameter.ParameterChangeListener
 import com.barrybecker4.optimization.parameter.types.Parameter
 import com.barrybecker4.optimization.parameter.ui.ParameterWidget
@@ -22,13 +22,13 @@ class ParameterPanel(var parameters: Seq[Parameter]) extends JScrollPane with Pa
   this.setViewportView(viewPanel)
 
   /** @param params set of parameters that match the number and type of the original */
-  def updateParameters(params: util.List[Parameter]): Unit = {
+  def updateParameters(params: Seq[Parameter]): Unit = {
     if (params == null) return
     assert(parameters == null || params.size == parameters.size,
       "old param size = " + parameters.size + " new param size = " + params.size)
     var i: Int = 0
     while (i < params.size) {
-      val newp: Parameter = params.get(i)
+      val newp: Parameter = params(i)
       val currentp: Parameter = parameters(i)
       assert(newp.name == currentp.name)
       currentp.setValue(newp.getValue)
@@ -45,7 +45,6 @@ class ParameterPanel(var parameters: Seq[Parameter]) extends JScrollPane with Pa
 
   /** Add a unique UI element for manipulating each individual parameter.  */
   private def initializeUI(): Unit = {
-    import scala.collection.JavaConversions._
     for (param <- parameters) {
       viewPanel.add(param.createWidget(this))
     }
