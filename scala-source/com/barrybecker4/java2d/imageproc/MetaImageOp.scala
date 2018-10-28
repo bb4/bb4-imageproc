@@ -94,18 +94,21 @@ class MetaImageOp {
       // @@ This should work with autoboxing, but does not for some reason, so we resort to ugly case statement.
       //args[0] = param.getNaturalValue();
       val paramType: Class[_] = param.getType
-      val arg =
-        if (paramType == classOf[Float]) Array(param.getValue.toFloat)
-        else if (paramType == classOf[Int]) Array(param.getValue.toInt)
-        else if (paramType == classOf[Boolean]) Array(param.getNaturalValue.asInstanceOf[Boolean])
-        else if (paramType == classOf[String]) Array(param.getNaturalValue.asInstanceOf[String])
-        else throw new IllegalArgumentException("Unexpected param type = " + paramType)
 
-      println("paramType = " + paramType)
-      println("param val = " + arg.mkString(","))
+      if (paramType == classOf[Float])
+        method.invoke(filter, new java.lang.Float(param.getValue.toFloat))
+      else if (paramType == classOf[Int])
+        method.invoke(filter, new java.lang.Integer(param.getValue.toInt))
+      else if (paramType == classOf[Boolean])
+        method.invoke(filter, new java.lang.Boolean(param.getNaturalValue.asInstanceOf[Boolean]))
+      else if (paramType == classOf[String])
+        method.invoke(filter, param.getNaturalValue.asInstanceOf[String])
+      else throw new IllegalArgumentException("Unexpected param type = " + paramType)
+
+
       // Currently getting IllegalArgumentException because passing Float, but wanting float.
       // Hopefully this will work in some future version of scala
-      method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
+      //method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
     }
     newParams
   }
