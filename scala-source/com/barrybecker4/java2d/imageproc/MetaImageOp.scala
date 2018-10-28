@@ -3,7 +3,6 @@ package com.barrybecker4.java2d.imageproc
 
 import java.awt.image.BufferedImageOp
 import java.lang.reflect.Method
-import java.util.logging.{Level, Logger}
 import com.barrybecker4.optimization.parameter.types.Parameter
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -18,33 +17,27 @@ object MetaImageOp {
   private val RANDOM: Random = new Random(1)
 }
 
-class MetaImageOp {
-  private var opClass: Class[_ <: BufferedImageOp] = _
-  private var op: BufferedImageOp = _
-  /** list of base params based for creating concrete imageOps. */
-  private var parameters: Seq[Parameter] = _
-  /** last used list of params used to create recent imageOp. */
-  private var lastUsedParameters: Seq[Parameter] = _
-  private var isDynamic: Boolean = false
+/**
+  * Information (like parameters) about the image operator
+  * @param op the meta op
+  * @param parameters list of base params based for creating concrete imageOps.
+  * @param isDynamic if it can be changed
+  */
+class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic: Boolean = true) {
 
-  /** Use this constructor if no parameters.
-    * @param op image operator
-    */
+  /** last used list of params used to create recent imageOp. */
+  private var lastUsedParameters: IndexedSeq[Parameter] = parameters.map(_.copy).toIndexedSeq
+
   def this(op: BufferedImageOp) {
-    this()
     // an empty list of parameters because there are none.
-    this.op = op
-    isDynamic = false
+    this(op, Seq(), false)
   }
 
   /** @param opClass the operator class.
     * @param params  all the parameters that need to be set on the op.
     */
   def this(opClass: Class[_ <: BufferedImageOp], params: Seq[Parameter]) {
-    this()
-    this.opClass = opClass
-    this.parameters = params
-    isDynamic = true
+    this(opClass.newInstance, params, true)
   }
 
   /** @return a concrete filter operator instance. */
@@ -55,39 +48,46 @@ class MetaImageOp {
     */
   def getRandomInstance(randomVariance: Float): BufferedImageOp = {
     println("getting random. isDynamic=" + isDynamic + " randomVariance=" + randomVariance)
-    if (!isDynamic) return op
-    try {
-      this.op = opClass.newInstance
+    if (!isDynamic) op
+    else {
       lastUsedParameters = tweakParameters(op, randomVariance)
-    } catch {
-      case ex: Exception =>
-        ex.printStackTrace()
-        Logger.getLogger(classOf[MetaImageOp].getName).log(Level.SEVERE, null, ex)
+      op
     }
-    op
+  }
+
+  /** @param param the parameter to update */
+  def updateParameter(param: Parameter): Unit = {
+    var idx: Int = 0
+    while (idx < lastUsedParameters.length && lastUsedParameters(idx).name != param.name)
+      idx += 1
+
+    assert(idx < lastUsedParameters.length)
+    lastUsedParameters = lastUsedParameters.updated(idx,  param)
   }
 
   def getBaseParameters: Seq[Parameter] = parameters
   def getLastUsedParameters: Seq[Parameter] = lastUsedParameters
 
-  def copy: MetaImageOp = if (isDynamic) new MetaImageOp(opClass, parameters)
+  def copy: MetaImageOp = if (isDynamic) new MetaImageOp(op.getClass, parameters)
   else new MetaImageOp(op)
 
   /** Call the methods on the filter to set its custom parameters.
     * @param filter the image filter to tweak
     * @param randomVariance amount to tweak
     */
-  private def tweakParameters(filter: BufferedImageOp, randomVariance: Float): Seq[Parameter] = {
-    System.out.println("op=" + filter.getClass.getSimpleName + " randomVariance=" + randomVariance)
+  private def tweakParameters(filter: BufferedImageOp, randomVariance: Float): IndexedSeq[Parameter] = {
+    println("op=" + filter.getClass.getSimpleName + " randomVariance=" + randomVariance)
     val newParams: ArrayBuffer[Parameter] = ArrayBuffer[Parameter]()
 
-    for (p <- parameters) { // the name must match the property (e.g. foo will be set using setFoo)
+    for (p <- lastUsedParameters) { // the name must match the property (e.g. foo will be set using setFoo)
       val methodName: String = "set" + p.name.substring(0, 1).toUpperCase + p.name.substring(1)
       println("methodName = " + methodName + " pType = " + p.getType)
       val method: Method = filter.getClass.getDeclaredMethod(methodName, p.getType)
 
-      val param: Parameter = p.copy
-      if (randomVariance > 0) param.tweakValue(randomVariance, MetaImageOp.RANDOM)
+      var param: Parameter = p
+      if (randomVariance > 0)
+        param = param.tweakValue(randomVariance, MetaImageOp.RANDOM)
+
       println("tweaked min = " + param.minValue + " max = " + param.maxValue + "  v = " + param.getValue)
       println("tweaked value = " + param)
       newParams.append(param)
@@ -95,20 +95,15 @@ class MetaImageOp {
       //args[0] = param.getNaturalValue();
       val paramType: Class[_] = param.getType
 
-      if (paramType == classOf[Float])
-        method.invoke(filter, new java.lang.Float(param.getValue.toFloat))
-      else if (paramType == classOf[Int])
-        method.invoke(filter, new java.lang.Integer(param.getValue.toInt))
-      else if (paramType == classOf[Boolean])
-        method.invoke(filter, new java.lang.Boolean(param.getNaturalValue.asInstanceOf[Boolean]))
-      else if (paramType == classOf[String])
-        method.invoke(filter, param.getNaturalValue.asInstanceOf[String])
-      else throw new IllegalArgumentException("Unexpected param type = " + paramType)
+      val arg =
+        if (paramType == classOf[Float]) new java.lang.Float(param.getValue.toFloat)
+        else if (paramType == classOf[Int]) new java.lang.Integer(param.getValue.toInt)
+        else if (paramType == classOf[Boolean]) new java.lang.Boolean(param.getNaturalValue.asInstanceOf[Boolean])
+        else if (paramType == classOf[String]) param.getNaturalValue.asInstanceOf[String]
+        else throw new IllegalArgumentException("Unexpected param type = " + paramType)
 
-
-      // Currently getting IllegalArgumentException because passing Float, but wanting float.
-      // Hopefully this will work in some future version of scala
-      //method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
+      println("*** calling " + methodName + " with " + arg)
+      method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
     }
     newParams
   }

@@ -21,7 +21,7 @@ class ParameterPanel(var parameters: Seq[Parameter]) extends JScrollPane with Pa
   if (parameters != null) initializeUI()
   this.setViewportView(viewPanel)
 
-  /** @param params set of parameters that match the number and type of the original */
+  /** @param params set of parameters that match the number and type of the original *
   def updateParameters(params: Seq[Parameter]): Unit = {
     if (params == null) return
     assert(parameters == null || params.size == parameters.size,
@@ -41,7 +41,7 @@ class ParameterPanel(var parameters: Seq[Parameter]) extends JScrollPane with Pa
       w.refresh()
       i += 1
     }
-  }
+  }*/
 
   /** Add a unique UI element for manipulating each individual parameter.  */
   private def initializeUI(): Unit = {

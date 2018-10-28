@@ -22,7 +22,9 @@ object FilterSamplerApp extends App {
   new FilterSamplerApp(imageFile)
 }
 
-class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter Sampler") with ItemListener with ActionListener with ParameterChangeListener {
+class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter Sampler")
+  with ItemListener with ActionListener with ParameterChangeListener {
+
   private var imageFrame: Frame = _
   private var splitImageComponent: SplitImageComponent = _
   private var accumulateCheckbox: Checkbox = _
@@ -33,9 +35,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   createImageFrame(imageFile)
   initializeUI()
 
-  /**
-    * The image to be manipulated goes in a separate frame.
-    *
+  /** The image to be manipulated goes in a separate frame.
     * @param imageFile image to load
     */
   private def createImageFrame(imageFile: String): Unit = {
@@ -63,7 +63,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   protected def initializeUI(): Unit = {
     val pt = imageFrame.getLocation
     setLocation(pt.x - getSize.width, pt.y)
-    filterList = operations.getSortedKeys()
+    filterList = operations.getSortedKeys
     // When an item is selected, do the corresponding transformation.
     filterList.addItemListener(this)
     val loadButton = new Button("Load...")
@@ -109,20 +109,21 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   private def replaceParameterUI(metaOp: MetaImageOp): Unit = { // now show ui for modifying the parameters for this op
     this.remove(paramPanel)
     paramPanel = new ParameterPanel(metaOp.getBaseParameters)
-    // We will get called whenever a paramerter is tweeked
+    // We will get called whenever a parameter is tweaked
     paramPanel.addParameterChangeListener(this)
     this.add(paramPanel, BorderLayout.CENTER)
     this.pack()
   }
 
-  /**
-    * Called whenever one of the UI parameter widgets was changed by the user.
-    *
+  /** Called whenever one of the UI parameter widgets was changed by the user.
     * @param param changed parameter
     */
-  override def parameterChanged(param: Parameter): Unit = { // we could use param.getName() to get the filter, but its just the currently selected one.
+  override def parameterChanged(param: Parameter): Unit = {
+    // we could use param.getName() to get the filter, but its just the currently selected one.
     val key = filterList.getSelectedItem
     val metaOp = operations.getOperation(key)
+    metaOp.updateParameter(param)
+
     val op = metaOp.getInstance
     applyImageOperator(op)
   }
@@ -136,9 +137,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
     imageFrame.setSize(imageFrame.getPreferredSize)
   }
 
-  /**
-    * Called when the load button is pressed.
-    *
+  /** Called when the load button is pressed.
     * @param ae action event
     */
   override def actionPerformed(ae: ActionEvent): Unit = {

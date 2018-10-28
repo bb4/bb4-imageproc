@@ -105,8 +105,10 @@ object ProcessingOperators {
       DoubleParameter.createUniformParameter(0.0, 0.0, 500.0, "radius", sv, svp),
       new DoubleParameter(0, 0.0, 2 * Math.PI, "angle", None),
       new DoubleParameter(0, 0.0, Math.PI, "angle2", None),
-      DoubleParameter.createGaussianParameter(0.5, 0.1, 0.9, "centreX", 0.5, .2),
-      DoubleParameter.createGaussianParameter(0.5, 0.1, 0.9, "centreY", 0.5, 0.2)
+      DoubleParameter.createGaussianParameter(
+        0.5, 0.1, 0.9, "centreX", 0.5, .2),
+      DoubleParameter.createGaussianParameter(
+        0.5, 0.1, 0.9, "centreY", 0.5, 0.2)
     )
     new MetaImageOp(classOf[KaleidoscopeFilter], params)
   }
@@ -119,7 +121,7 @@ class ProcessingOperators() {
   def getOperation(key: String): MetaImageOp = mOps(key)
 
   /*** @return a sorted list of the operators. */
-  def getSortedKeys(): java.awt.List = {
+  def getSortedKeys: java.awt.List = {
     val list = new java.awt.List()
     for (item <- mOps.keySet.toSeq.sorted)
       list.add(item)
