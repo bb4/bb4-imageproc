@@ -34,11 +34,9 @@ object ShowOff extends App {
     f.setResizable(false)
 }
 
-/**
-  * @param filename the file name
+/** @param filename the file name
   * @param message  message to display
   * @param split  number of splits
-  * @throws IOException if io error
   */
 class ShowOff(val filename: String, var message: String, var split: Int) extends Component {
   val img: Image = Utilities.blockingLoad(getClass.getResource(filename))
@@ -125,7 +123,8 @@ class ShowOff(val filename: String, var message: String, var split: Int) extends
     drawString(g2, width - bounds.getHeight, y, -Math.PI / 2)
   }
 
-  protected def drawString(g2: Graphics2D, x: Double, y: Double, theta: Double): Unit = { // Transform to the requested location.
+  protected def drawString(g2: Graphics2D, x: Double, y: Double, theta: Double): Unit = {
+    // Transform to the requested location.
     g2.translate(x, y)
     // Rotate by the requested angle.
     g2.rotate(theta)
@@ -140,7 +139,8 @@ class ShowOff(val filename: String, var message: String, var split: Int) extends
     g2.translate(-x, -y)
   }
 
-  protected def drawBoxedString(g2: Graphics2D, s: String, c1: Color, c2: Color, x: Double): Float = { // Calculate the width of the string.
+  protected def drawBoxedString(g2: Graphics2D, s: String, c1: Color, c2: Color, x: Double): Float = {
+    // Calculate the width of the string.
     val frc = g2.getFontRenderContext
     val subLayout = new TextLayout(s, mFont, frc)
     val advance = subLayout.getAdvance
