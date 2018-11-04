@@ -1,9 +1,9 @@
 /** Copyright by Barry G. Becker, 2011-2018. Licensed under MIT License: http://www.opensource.org/licenses/MIT  */
 package com.barrybecker4.java2d.imageproc
 
-import java.awt.{BorderLayout, Button, Checkbox, Dimension, FileDialog, Font, Frame, GridLayout, Label, List, Panel, Point}
+import java.awt.{BorderLayout, Button, Dimension, FileDialog, Font, Frame, GridLayout, Label, List, Panel, Point}
 import java.awt.event.{ActionEvent, ActionListener, ItemEvent, ItemListener}
-import java.awt.image.{BufferedImage, BufferedImageOp}
+import java.awt.image.BufferedImageOp
 import java.awt.Checkbox
 import com.barrybecker4.java2d.Utilities
 import com.barrybecker4.java2d.ui.SplitImageComponent
