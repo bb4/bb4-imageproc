@@ -20,9 +20,8 @@ import com.barrybecker4.java2d.spaceinvaders.{Sprite, SpriteStore}
   */
 abstract class Entity(val ref: String, var x: Double, var y: Double) {
 
-  this.sprite = SpriteStore.getSprite(ref)
   /** The sprite that represents this entity */
-  protected var sprite: Sprite = _
+  protected var sprite: Sprite = SpriteStore.getSprite(ref)
   /** The current speed of this entity horizontally (pixels/sec) */
   protected var dx: Double = 0
   /** The current speed of this entity vertically (pixels/sec) */

@@ -1,6 +1,6 @@
 package com.barrybecker4.java2d.spaceinvaders.entity
 
-import com.barrybecker4.java2d.spaceinvaders.Game
+import com.barrybecker4.java2d.spaceinvaders.SpaceInvadersGame
 import com.barrybecker4.java2d.spaceinvaders.GameConstants._
 
 /**
@@ -12,7 +12,7 @@ import com.barrybecker4.java2d.spaceinvaders.GameConstants._
   * @param y    The initial y location of the player's ship
   * @author Kevin Glass
   */
-class ShipEntity(var game: Game, ref: String, x: Int, y: Int) extends Entity(ref, x, y) {
+class ShipEntity(var game: SpaceInvadersGame, ref: String, x: Int, y: Int) extends Entity(ref, x, y) {
 
   /** Request that the ship move itself based on an elapsed amount of time
     * @param delta The time that has elapsed since last move (ms)

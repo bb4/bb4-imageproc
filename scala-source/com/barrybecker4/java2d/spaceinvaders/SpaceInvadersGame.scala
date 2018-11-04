@@ -24,11 +24,11 @@ import com.barrybecker4.java2d.spaceinvaders.GameConstants._
   * @author Kevin Glass
   * @author Barry Becker (ported it to Scala)
   */
-object Game extends App {
-  val g = new Game
+object SpaceInvadersGame extends App {
+  val g = new SpaceInvadersGame
 }
 
-class Game() extends Canvas {
+class SpaceInvadersGame() extends Canvas {
   val container = new JFrame("Space Invaders 101")
 
   /** The strategy that allows us to use accelerate page flipping */

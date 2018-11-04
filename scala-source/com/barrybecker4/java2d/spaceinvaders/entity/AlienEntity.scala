@@ -1,6 +1,6 @@
 package com.barrybecker4.java2d.spaceinvaders.entity
 
-import com.barrybecker4.java2d.spaceinvaders.{Game, GameConstants}
+import com.barrybecker4.java2d.spaceinvaders.{SpaceInvadersGame, GameConstants}
 import GameConstants._
 
 
@@ -11,7 +11,7 @@ import GameConstants._
   * @param ref  The sprite which should be displayed for this alien
   * @author Kevin Glass
   */
-class AlienEntity(var game: Game, ref: String, initialX: Double, initialY: Double)
+class AlienEntity(var game: SpaceInvadersGame, ref: String, initialX: Double, initialY: Double)
   extends Entity(ref, initialX, initialY) {
 
   /** The speed at which the alien moves horizontally */

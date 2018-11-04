@@ -1,6 +1,6 @@
 package com.barrybecker4.java2d.spaceinvaders.entity
 
-import com.barrybecker4.java2d.spaceinvaders.Game
+import com.barrybecker4.java2d.spaceinvaders.SpaceInvadersGame
 import ShotEntity.MOVE_SPEED
 
 object ShotEntity {
@@ -17,7 +17,7 @@ object ShotEntity {
   * @author Kevin Glass
   */
 class ShotEntity(/** The game in which this entity exists */
-                 var game: Game, sprite: String, x: Int, y: Int) extends Entity(sprite, x, y) {
+                 var game: SpaceInvadersGame, sprite: String, x: Int, y: Int) extends Entity(sprite, x, y) {
 
 
   /** True if this shot has been "used". i.e. it hit something */
