@@ -13,10 +13,10 @@ abstract class Curve(pts: Array[Point2D]) {
   }
 
   protected def getShape: Shape
-  def paint(g2: Graphics2D, selectedPoint: Point2D): Unit
+  def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit
 
   def contains(point: Point2D): Option[Point2D] = {
-    val local = this.getControlPoint(point)
+    val local = getControlPoint(point)
     for (p <- pts) {
       if (local.contains(p))
         return Some(p)
@@ -24,7 +24,7 @@ abstract class Curve(pts: Array[Point2D]) {
     None
   }
 
-  protected def drawCurve(g2: Graphics2D, selectedPoint: Point2D): Unit = {
+  protected def drawCurve(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
     g2.setPaint(Color.black)
     g2.draw(getShape)
     drawPoints(g2, selectedPoint)
@@ -32,10 +32,11 @@ abstract class Curve(pts: Array[Point2D]) {
 
   /** Draw all the points in the curve with the actively selected one highlighted */
   protected def drawPoints(g2: Graphics2D,
-                           selectedPoint: Point2D): Unit = {
+                           selectedPoint: Option[Point2D]): Unit = {
     var i = 0
     while (i < pts.length) { // If the point is selected, use the selected color.
-      if (pts(i) eq selectedPoint) g2.setPaint(Color.red)
+      if (selectedPoint.isDefined && (pts(i) eq selectedPoint.get))
+        g2.setPaint(Color.red)
       else g2.setPaint(Color.blue)
       g2.fill(getControlPoint(pts(i)))
       i += 1

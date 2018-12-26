@@ -10,7 +10,7 @@ class CubicCurve(pts: Array[Point2D]) extends Curve(pts) {
 
   override protected def getShape: Shape = cubicCurve
 
-  def paint(g2: Graphics2D, selectedPoint: Point2D): Unit = {
+  def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
 
     cubicCurve.setCurve(pts, 0)
     val tangent1 = new Line2D.Double(pts(0), pts(1))

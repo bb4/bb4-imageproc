@@ -15,7 +15,9 @@ object Splines extends App {
   new Splines
 }
 
-class Splines() extends ApplicationFrame("Splines v1.0") with MouseListener with MouseMotionListener {
+class Splines() extends ApplicationFrame("Splines v1.0")
+  with MouseListener with MouseMotionListener {
+
   setSize(300, 300)
 
   val curves = Seq(
@@ -30,9 +32,9 @@ class Splines() extends ApplicationFrame("Splines v1.0") with MouseListener with
       new Point2D.Double(50, 275), new Point2D.Double(250, 275)
     ))
   )
-  this.repaint()
+  repaint()
 
-  protected var selectedPoint: Point2D = _
+  private var selectedPoint: Option[Point2D] = None
   // Listen for mouse events.
   addMouseListener(this)
   addMouseMotionListener(this)
@@ -50,13 +52,13 @@ class Splines() extends ApplicationFrame("Splines v1.0") with MouseListener with
   override def mouseClicked(me: MouseEvent): Unit = {}
 
   override def mousePressed(me: MouseEvent): Unit = {
-    selectedPoint = null
+    selectedPoint = None
     val currentPt = me.getPoint
 
     for (c <- curves) {
       val selPt = c.contains(currentPt)
       if (selPt.isDefined) {
-        selectedPoint = selPt.get
+        selectedPoint = selPt
       }
     }
     repaint()
@@ -66,8 +68,8 @@ class Splines() extends ApplicationFrame("Splines v1.0") with MouseListener with
   override def mouseMoved(me: MouseEvent): Unit = {}
 
   override def mouseDragged(me: MouseEvent): Unit = {
-    if (selectedPoint != null) {
-      selectedPoint.setLocation(me.getPoint)
+    if (selectedPoint.isDefined) {
+      selectedPoint.get.setLocation(me.getPoint)
       repaint()
     }
   }

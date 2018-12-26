@@ -9,7 +9,7 @@ class LinearCurve(pts: Array[Point2D]) extends Curve(pts) {
 
   override protected def getShape: Shape = line
 
-  override def paint(g2: Graphics2D, selectedPoint: Point2D): Unit = {
+  override def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
     line.setLine(pts(0), pts(1))
     drawCurve(g2, selectedPoint)
   }
