@@ -18,7 +18,7 @@ object Splines extends App {
 class Splines() extends ApplicationFrame("Splines v1.0")
   with MouseListener with MouseMotionListener {
 
-  setSize(300, 300)
+  setSize(400, 400)
 
   val curves = Seq(
     new CubicCurve(Array(
@@ -29,7 +29,7 @@ class Splines() extends ApplicationFrame("Splines v1.0")
       new Point2D.Double(50, 175), new Point2D.Double(150, 150), new Point2D.Double(250, 175)
     )),
     new LinearCurve(Array(
-      new Point2D.Double(50, 275), new Point2D.Double(250, 275)
+      new Point2D.Double(50, 275), new Point2D.Double(250, 275), new Point2D.Double(290, 295)
     ))
   )
   repaint()

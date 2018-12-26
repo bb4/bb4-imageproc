@@ -8,8 +8,6 @@ class CubicCurve(pts: Array[Point2D]) extends Curve(pts) {
   assert(pts.length >= 4)
   val cubicCurve = new CubicCurve2D.Float
 
-  override protected def getShape: Shape = cubicCurve
-
   def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
 
     cubicCurve.setCurve(pts, 0)
@@ -19,6 +17,8 @@ class CubicCurve(pts: Array[Point2D]) extends Curve(pts) {
     g2.draw(tangent1)
     g2.draw(tangent2)
 
-    drawCurve(g2, selectedPoint)
+    g2.setPaint(Color.black)
+    g2.draw(cubicCurve)
+    drawPoints(g2, selectedPoint)
   }
 }

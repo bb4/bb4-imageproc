@@ -12,7 +12,6 @@ abstract class Curve(pts: Array[Point2D]) {
     new Rectangle2D.Double(p.getX - side / 2, p.getY - side / 2, side, side)
   }
 
-  protected def getShape: Shape
   def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit
 
   def contains(point: Point2D): Option[Point2D] = {
@@ -22,12 +21,6 @@ abstract class Curve(pts: Array[Point2D]) {
         return Some(p)
     }
     None
-  }
-
-  protected def drawCurve(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
-    g2.setPaint(Color.black)
-    g2.draw(getShape)
-    drawPoints(g2, selectedPoint)
   }
 
   /** Draw all the points in the curve with the actively selected one highlighted */

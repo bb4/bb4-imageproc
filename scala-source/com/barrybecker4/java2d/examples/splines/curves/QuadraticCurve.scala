@@ -8,8 +8,6 @@ class QuadraticCurve(pts: Array[Point2D]) extends Curve(pts) {
   assert(pts.length >= 3)
   val qCurve = new QuadCurve2D.Float
 
-  override protected def getShape: Shape = qCurve
-
   def paint(g2: Graphics2D, selectedPoint: Option[Point2D]): Unit = {
 
     qCurve.setCurve(pts, 0)
@@ -19,6 +17,8 @@ class QuadraticCurve(pts: Array[Point2D]) extends Curve(pts) {
     g2.draw(tangent1)
     g2.draw(tangent2)
 
-    drawCurve(g2, selectedPoint)
+    g2.setPaint(Color.black)
+    g2.draw(qCurve)
+    drawPoints(g2, selectedPoint)
   }
 }
