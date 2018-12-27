@@ -3,7 +3,7 @@ plugins {
 }
 description = 'Scala Java2D library and demos'
 group = 'com.barrybecker4'
-version = '1.3-SNAPSHOT'
+version = '1.5-SNAPSHOT'
 
 apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4.gradle'
 
