@@ -3,7 +3,6 @@ package com.barrybecker4.java2d.examples.splines
 import java.awt._
 import java.awt.event.{MouseEvent, MouseListener, MouseMotionListener}
 import java.awt.geom._
-
 import com.barrybecker4.java2d.examples.splines.curves.{CubicCurve, LinearCurve, QuadraticCurve}
 import com.barrybecker4.ui.application.ApplicationFrame
 
@@ -23,7 +22,9 @@ class Splines() extends ApplicationFrame("Splines v1.0")
   val curves = Seq(
     new CubicCurve(Array(
       new Point2D.Double(50, 75), new Point2D.Double(100, 100),
-      new Point2D.Double(200, 50), new Point2D.Double(250, 75))
+      new Point2D.Double(200, 50), new Point2D.Double(250, 75),
+      new Point2D.Double(300, 90),
+      new Point2D.Double(350, 60), new Point2D.Double(390, 75))
     ),
     new QuadraticCurve(Array(
       new Point2D.Double(50, 175), new Point2D.Double(150, 150), new Point2D.Double(250, 175),

@@ -4,7 +4,7 @@ import java.awt.{Color, Graphics2D, Shape}
 import java.awt.geom.{Line2D, Point2D, QuadCurve2D}
 
 /**
-  * A piece-wise cubic curve. The first 3 points define the first cubic segment.
+  * A piece-wise quadradic curve. The first 3 points define the first quadratic segment.
   * Every 2 points after that define an additional segment joint with the one before it.
   * @param pts points that define the cubic curve
   */
@@ -29,6 +29,5 @@ class QuadraticCurve(pts: Array[Point2D]) extends Curve(pts) {
       g2.draw(qCurve)
       drawPoints(g2, selectedPoint)
     }
-
   }
 }
