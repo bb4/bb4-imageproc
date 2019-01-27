@@ -3,7 +3,7 @@ plugins {
 }
 description = 'Scala Java2D library and demos'
 group = 'com.barrybecker4'
-version = '1.5-SNAPSHOT'
+version = '1.5'
 
 apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4.gradle'
 
@@ -13,7 +13,7 @@ mainClassName = 'com.barrybecker4.java2d.imageproc.FilterSamplerApp'
 
 
 dependencies {
-    compile 'com.barrybecker4:bb4-optimization:1.5-SNAPSHOT'
+    compile 'com.barrybecker4:bb4-optimization:1.5'
     compile fileTree(dir: 'lib', include: 'jhlabs-1.0.3.jar')
 }
 
