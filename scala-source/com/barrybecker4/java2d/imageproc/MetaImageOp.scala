@@ -105,6 +105,6 @@ class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic
       println("*** calling " + methodName + " with " + arg)
       method.invoke(filter, arg) // p.getInformation().cast(p.getValue()));
     }
-    newParams
+    newParams.toIndexedSeq
   }
 }

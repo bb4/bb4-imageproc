@@ -1,11 +1,11 @@
 plugins {
-    id "com.github.maiflai.scalatest" version "0.23" // needed to run scala tests
+    id "com.github.maiflai.scalatest" version "0.25" // needed to run scala tests
 }
 description = 'Scala Java2D library and demos'
 group = 'com.barrybecker4'
-version = '1.6-SNAPTHOT'
+version = '1.6-SNAPSHOT'
 
-apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4.gradle'
+apply from: 'https://raw.githubusercontent.com/bb4/bb4-common/master/bb4.gradle'
 
 project.archivesBaseName = 'bb4-imageproc'
 mainClassName = 'com.barrybecker4.java2d.imageproc.FilterSamplerApp'
@@ -33,4 +33,4 @@ jar {
 }
 
 // This allows publishing of this project library to Sonatype
-apply from: 'https://raw.github.com/barrybecker4/bb4-common/master/bb4-publish.gradle'
+apply from: 'https://raw.githubusercontent.com/bb4/bb4-common/master/bb4-publish.gradle'

@@ -40,12 +40,12 @@ class SwingPrinter() extends JFrame("SwingPrinter v1.0") {
     val mb = new JMenuBar
     val file = new JMenu("File", true)
     file.add(new FilePrintAction)
-      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK))
+      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK))
     file.add(new FilePageSetupAction)
-      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK))
+      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK))
     file.addSeparator()
     file.add(new SwingPrinter.FileQuitAction)
-      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK))
+      .setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK))
     mb.add(file)
     setJMenuBar(mb)
     // Add the contents of the window.

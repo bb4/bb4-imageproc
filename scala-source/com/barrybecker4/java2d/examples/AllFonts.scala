@@ -83,8 +83,8 @@ object AllFonts {
         else otherFonts.append(font)
       }
       val combinedList = new ArrayBuffer[Font]()
-      combinedList.append(multiLingualFonts: _*)
-      combinedList.append(otherFonts: _*)
+      combinedList.appendAll(multiLingualFonts)
+      combinedList.appendAll(otherFonts)
       combinedList
     }
 
