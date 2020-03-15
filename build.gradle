@@ -1,16 +1,15 @@
 plugins {
     id "com.github.maiflai.scalatest" version "0.25" // needed to run scala tests
 }
-description = 'Scala Java2D library and demos'
+description = 'Scala Java2D library and demos (based on code from Java 2D by J. Knudsen)'
 group = 'com.barrybecker4'
 version = '1.6-SNAPSHOT'
-
+ext {
+    archivesBaseName = 'bb4-imageproc'
+    mainClass = 'com.barrybecker4.java2d.imageproc.FilterSamplerApp'
+    // mainClass = "com.barrybecker4.java2d.ui.RightSizer"
+}
 apply from: 'https://raw.githubusercontent.com/bb4/bb4-common/master/bb4.gradle'
-
-project.archivesBaseName = 'bb4-imageproc'
-mainClassName = 'com.barrybecker4.java2d.imageproc.FilterSamplerApp'
-// mainClassName = "com.barrybecker4.java2d.ui.RightSizer"
-
 
 dependencies {
     compile 'com.barrybecker4:bb4-optimization:1.6-SNAPSHOT'
@@ -25,7 +24,7 @@ jar {
     include 'com/barrybecker4/java2d/ui/**/*.class'
     include 'com/barrybecker4/java2d/*.class'
     manifest {
-        attributes 'Implementation-Title': 'Java2d library (based on code from Java 2D by J. Knudsen)',
+        attributes 'Implementation-Title': description,
                 'Implementation-Version': version,
                 'provider': 'gradle',
                 'Main-Class': mainClassName
