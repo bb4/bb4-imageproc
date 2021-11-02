@@ -60,17 +60,17 @@ class ShowOff(val filename: String, var message: String, var split: Int) extends
 
   // Draw circles of different colors.
   protected def drawBackground(g2: Graphics2D): Unit = {
-    val side = 45
+    val side: Float = 45
     val width = getSize.width
     val height = getSize.height
     val colors = Array(Color.yellow, Color.cyan, Color.orange, Color.pink, Color.magenta, Color.lightGray)
-    var y = 0
+    var y: Float = 0
     while (y < height) {
-      var x = 0
+      var x: Float = 0
       while (x < width) {
         val ellipse = new Ellipse2D.Float(x, y, side, side)
         val index = (x + y) / side % colors.length
-        g2.setPaint(colors(index))
+        g2.setPaint(colors(index.toInt))
         g2.fill(ellipse)
         x += side
       }

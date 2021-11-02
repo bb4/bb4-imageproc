@@ -17,7 +17,7 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
   private var mFontSize: Int = 12
   private val mFont: Font = new Font("Serif", Font.PLAIN, mFontSize)
   private val source = Source.fromFile(file)
-  private val lines: Iterator[String] = source.getLines
+  private val lines: Iterator[String] = source.getLines()
   source.close()
 
   // Now paginate, based on the PageFormat.
@@ -34,7 +34,7 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
   def paginate(pageFormat: PageFormat): Unit = {
     currentPage = 0
     pages = new util.Vector[util.Vector[String]]
-    var y: Float = mFontSize
+    var y: Float = mFontSize.toFloat
     var page: util.Vector[String] = new util.Vector[String]
 
     for (line <- lines) {
@@ -57,7 +57,7 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
   override def paintComponent(g: Graphics): Unit = {
     val g2: Graphics2D = g.asInstanceOf[Graphics2D]
     // Make the background white.
-    val r: Rectangle2D = new Rectangle2D.Float(0, 0, getPreferredSize.width, getPreferredSize.height)
+    val r: Rectangle2D = new Rectangle2D.Float(0, 0, getPreferredSize.width.toFloat, getPreferredSize.height.toFloat)
     g2.setPaint(Color.white)
     g2.fill(r)
     // Get the current page.

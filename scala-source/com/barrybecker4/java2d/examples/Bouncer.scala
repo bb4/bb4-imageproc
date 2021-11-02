@@ -217,7 +217,7 @@ class Bouncer() extends AnimationComponent {
         val limit = if ((i % 2) == 0) d.width
         else d.height
         if (mPoints(i) < 0) mPoints(i) = 0
-        else if (mPoints(i) >= limit) mPoints(i) = limit - 1
+        else if (mPoints(i) >= limit.toFloat) mPoints(i) = limit.toFloat - 1
         i += 1
       }
     }

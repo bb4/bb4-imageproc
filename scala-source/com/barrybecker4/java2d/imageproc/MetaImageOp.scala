@@ -28,15 +28,15 @@ class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic
   /** last used list of params used to create recent imageOp. */
   private var lastUsedParameters: IndexedSeq[Parameter] = parameters.map(_.copy).toIndexedSeq
 
-  def this(op: BufferedImageOp) {
+  def this(op: BufferedImageOp) = {
     // an empty list of parameters because there are none.
     this(op, Seq(), false)
   }
 
   /** @param opClass the operator class.
-    * @param params  all the parameters that need to be set on the op.
+    * @param params all the parameters that need to be set on the op.
     */
-  def this(opClass: Class[_ <: BufferedImageOp], params: Seq[Parameter]) {
+  def this(opClass: Class[_ <: BufferedImageOp], params: Seq[Parameter]) = {
     this(opClass.newInstance, params, true)
   }
 

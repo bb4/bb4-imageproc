@@ -202,8 +202,8 @@ class TextBouncer(var mString: String, val f: Font) extends AnimationComponent {
   private class BouncerComponentAdapter extends ComponentAdapter {
     override def componentResized(ce: ComponentEvent): Unit = {
       val d: Dimension = getSize
-      val w: Float = d.width
-      val h: Float = d.height
+      val w: Float = d.width.toFloat
+      val h: Float = d.height.toFloat
       mX = if (mX < 0) 0 else if (mX + mWidth >= w) w - mWidth - 1f else mX
       mY = if (mY < 0) 0 else if (mY + mHeight >= h) h - mHeight - 1f else mY
     }

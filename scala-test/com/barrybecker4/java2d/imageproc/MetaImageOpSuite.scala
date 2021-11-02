@@ -3,15 +3,14 @@ package com.barrybecker4.java2d.imageproc
 import java.awt.RenderingHints
 import java.awt.geom.{Point2D, Rectangle2D}
 import java.awt.image.{BufferedImage, BufferedImageOp, ColorModel}
-import junit.framework.TestCase
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
 
 /**
   * @author Barry Becker
   */
 
-class MetaImageOpSuite extends  FunSuite {
+class MetaImageOpSuite extends  AnyFunSuite {
 
   class StubBufferedOp extends BufferedImageOp {
     override def filter(src: BufferedImage, dest: BufferedImage): BufferedImage = null
