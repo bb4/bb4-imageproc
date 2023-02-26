@@ -12,13 +12,19 @@ import com.barrybecker4.optimization.parameter.types.Parameter
 import com.barrybecker4.ui.application.ApplicationFrame
 
 
+/*
+@main def main(filename: String) =
+  var imageFile = Utilities.DEFAULT_IMAGE_DIR + "EtholWithRoses.small.jpg"
+  if (filename != null) imageFile = filename
+  new FilterSamplerApp(imageFile)
+*/
 /**
   * Allows you to test filters and modify their parameters on the fly.
   * Based on the Sampler program that comes with Java2D by Knudsen.
   */
 object FilterSamplerApp extends App {
   var imageFile = Utilities.DEFAULT_IMAGE_DIR + "EtholWithRoses.small.jpg"
-  if (args.length > 0) imageFile = args(0)
+  //if (args.length > 0) imageFile = args(0)
   new FilterSamplerApp(imageFile)
 }
 
@@ -141,7 +147,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
     * @param ae action event
     */
   override def actionPerformed(ae: ActionEvent): Unit = {
-    val fd = new FileDialog(FilterSamplerApp.this)
+    val fd = new FileDialog(this.imageFrame)
     fd.setVisible(true)
     if (fd.getFile == null) return
     val path = fd.getDirectory + fd.getFile

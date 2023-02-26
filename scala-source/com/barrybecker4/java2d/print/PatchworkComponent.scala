@@ -11,7 +11,7 @@ import java.awt.print.Printable._
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-class PatchworkComponent() extends JComponent with Printable {
+class PatchworkComponent(s: String) extends JComponent with Printable {
   private val mSide: Float = 36
   private val mOffset: Float = 36
 
@@ -34,9 +34,8 @@ class PatchworkComponent() extends JComponent with Printable {
   y1 = yy + halfSide
   private var mHorizontalGradient = new GradientPaint(x0, y0, Color.darkGray, x1, y1, Color.lightGray, true)
 
-  def this(s: String) {
-    this
-    mString = s
+  def this() = {
+    this("Patchwork")
   }
 
   override def paintComponent(g: Graphics): Unit = {

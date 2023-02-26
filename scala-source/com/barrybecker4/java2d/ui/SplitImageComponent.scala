@@ -15,22 +15,23 @@ import java.awt.image.BufferedImage
   * There are left and right images shown on either side of the split.
   * @author Barry Becker
   */
-class SplitImageComponent extends JPanel {
+class SplitImageComponent(path: String, image: BufferedImage) extends JPanel {
   private var mImage: BufferedImage = _
   private var mSecondImage: BufferedImage = _
   private var mSplitX = 0
 
+  assert (path != null || image != null)
+  if (path != null) setImage(path)
+  else setImage(image)
+  init()
+
   /** @param path resource path to image */
-  def this(path: String) {
-    this()
-    setImage(path)
-    init()
+  def this(path: String) = {
+    this(path, null)
   }
 
-  def this(image: BufferedImage) {
-    this()
-    setImage(image)
-    init()
+  def this(image: BufferedImage) = {
+    this(null, image)
   }
 
   def setImage(path: String): Unit = {

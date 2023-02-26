@@ -1,9 +1,11 @@
 /** Copyright by Barry G. Becker, 2011-2018. Licensed under MIT License: http://www.opensource.org/licenses/MIT  */
 package com.barrybecker4.java2d.imageproc
 
+import com.barrybecker4.optimization.parameter.redistribution.BooleanRedistribution
+
 import java.awt.image.{ConvolveOp, Kernel, LookupOp, ShortLookupTable}
-import com.barrybecker4.optimization.parameter.types._
-import com.jhlabs.image._
+import com.barrybecker4.optimization.parameter.types.*
+import com.jhlabs.image.*
 
 
 /**
@@ -14,12 +16,12 @@ object ProcessingOperators {
 
   private def createCausticsOp: MetaImageOp = {
     val params = Seq(
-      new DoubleParameter(0.0, 0, 10.0, "time", None),
-      new DoubleParameter(32.0, 0.1, 100.0, "scale", None),
-      new IntegerParameter(10, 1, 50, "brightness", None),
-      new DoubleParameter(0.0, 0.0, 10.0, "turbulence", None),
-      new DoubleParameter(0.0, 0.0, 1.0, "dispersion", None),
-      new DoubleParameter(1.0, 0.1, 2.0, "amount", None)
+      DoubleParameter(0.0, 0, 10.0, "time", None),
+      DoubleParameter(32.0, 0.1, 100.0, "scale", None),
+      IntegerParameter(10, 1, 50, "brightness", None),
+      DoubleParameter(0.0, 0.0, 10.0, "turbulence", None),
+      DoubleParameter(0.0, 0.0, 1.0, "dispersion", None),
+      DoubleParameter(1.0, 0.1, 2.0, "amount", None)
     )
     new MetaImageOp(classOf[CausticsFilter], params)
   }
@@ -29,20 +31,20 @@ object ProcessingOperators {
     val specValueProbs: Array[Double] = Array(0.6)
 
     val params = Seq(
-      new BooleanParameter(true, "useColor", None),
+      BooleanParameter(true, "useColor"),// this gives scala 3 error
       IntegerParameter.createDiscreteParameter(CellularFilter.GridType.RANDOM.ordinal,
       0, CellularFilter.GridType.values.length, "gridType", specValues, specValueProbs),
-      new IntegerParameter(1, 1, 20, "turbulence", None),
-      new DoubleParameter(0.0, 0.0, 1.0, "F1", None),
-      new DoubleParameter(0.0, 0.0, 1.0, "F2", None),
-      new DoubleParameter(0.0, 0.0, 1.0, "randomness", None),
-      new DoubleParameter(.5, 0.0, 1.0, "amount", None),
-      new DoubleParameter(1.0, 0.0, 2.0, "gradientCoefficient", None),
-      new DoubleParameter(1.0, 1.0, 30.0, "stretch", None),
-      new DoubleParameter(0.0, 0.0, Math.PI, "angle", None), // in radians
-      new DoubleParameter(1.0, 0.0, 5.0, "angleCoefficient", None),
-      new IntegerParameter(1, 1, 6, "distancePower", None),
-      new DoubleParameter(16.0, 0.1, 64.0, "scale", None)
+      IntegerParameter(1, 1, 20, "turbulence", None),
+      DoubleParameter(0.0, 0.0, 1.0, "F1", None),
+      DoubleParameter(0.0, 0.0, 1.0, "F2", None),
+      DoubleParameter(0.0, 0.0, 1.0, "randomness", None),
+      DoubleParameter(.5, 0.0, 1.0, "amount", None),
+      DoubleParameter(1.0, 0.0, 2.0, "gradientCoefficient", None),
+      DoubleParameter(1.0, 1.0, 30.0, "stretch", None),
+      DoubleParameter(0.0, 0.0, Math.PI, "angle", None), // in radians
+      DoubleParameter(1.0, 0.0, 5.0, "angleCoefficient", None),
+      IntegerParameter(1, 1, 6, "distancePower", None),
+      DoubleParameter(16.0, 0.1, 64.0, "scale", None)
     )
     new MetaImageOp(classOf[CellularFilter], params)
   }
@@ -71,26 +73,26 @@ object ProcessingOperators {
       StringParameter(FBMFilter.BasisType.CELLULAR.ordinal, FBMFilter.BasisType.values.map(_.toString).toIndexedSeq, "basisType", None),
       IntegerParameter.createDiscreteParameter(OperationType.MULTIPLY.ordinal,
         0, OperationType.values.length, "operation", specValues, specValueProbs),
-      new DoubleParameter(0.8, 0.1, 3.0, "amount", None),
-      new DoubleParameter(32, 4, 128, "scale", None),
+      DoubleParameter(0.8, 0.1, 3.0, "amount", None),
+      DoubleParameter(32, 4, 128, "scale", None),
       DoubleParameter.createUniformParameter(1.0, 1.0, 8.0, "stretch", sv, svp),
       DoubleParameter.createUniformParameter(0.0, 0.0, Math.PI, "angle", sv, svp),
-      new DoubleParameter(1.0, 0.0, 5.0, "H", None),
-      new DoubleParameter(2.0, 0.1, 4.0, "lacunarity", None),
-      new DoubleParameter(0.5, 0.1, 2.0, "gain", None),
+      DoubleParameter(1.0, 0.0, 5.0, "H", None),
+      DoubleParameter(2.0, 0.1, 4.0, "lacunarity", None),
+      DoubleParameter(0.5, 0.1, 2.0, "gain", None),
       DoubleParameter.createGaussianParameter(0.5,
       0.0, 2.0, "bias", 0.24, 0.2),
-      new DoubleParameter(4.0, 0.1, 16.0, "octaves", None)
+      DoubleParameter(4.0, 0.1, 16.0, "octaves", None)
     )
     new MetaImageOp(classOf[FBMFilter], params)
   }
 
   private def createContourOp: MetaImageOp = {
     val params = Seq(
-      new DoubleParameter(5.0, 0.1, 10.0, "levels", None),
-      new DoubleParameter(1.0, 0.1, 10.0, "scale", None),
-      new DoubleParameter(0.0, 0.0, 2.0, "offset", None),
-      new IntegerParameter(0xff2200aa,
+      DoubleParameter(5.0, 0.1, 10.0, "levels", None),
+      DoubleParameter(1.0, 0.1, 10.0, "scale", None),
+      DoubleParameter(0.0, 0.0, 2.0, "offset", None),
+      IntegerParameter(0xff2200aa,
       0xff000000, 0xffffffff, "contourColor", None)
     )
     new MetaImageOp(classOf[ContourFilter], params)
@@ -101,10 +103,10 @@ object ProcessingOperators {
     val svp: Array[Double] = Array(0.3)
 
     val params = Seq(
-      new IntegerParameter(3, 1, 6, "sides", None),
+      IntegerParameter(3, 1, 6, "sides", None),
       DoubleParameter.createUniformParameter(0.0, 0.0, 500.0, "radius", sv, svp),
-      new DoubleParameter(0, 0.0, 2 * Math.PI, "angle", None),
-      new DoubleParameter(0, 0.0, Math.PI, "angle2", None),
+      DoubleParameter(0, 0.0, 2 * Math.PI, "angle", None),
+      DoubleParameter(0, 0.0, Math.PI, "angle2", None),
       DoubleParameter.createGaussianParameter(
         0.5, 0.1, 0.9, "centreX", 0.5, .2),
       DoubleParameter.createGaussianParameter(
@@ -197,25 +199,25 @@ class ProcessingOperators() {
     mOps += "Cellular" -> ProcessingOperators.createCellularOp
     mOps += "Contour" -> ProcessingOperators.createContourOp
     params = Seq(
-      new BooleanParameter(false, "fadeEdges", None),
-      new DoubleParameter(0.4, 0.1, 2.0, "edgeThickness", None),
-      new IntegerParameter(0xff2200aa, 0xff000000, 0xffffffff, "edgeColor", None)
+      BooleanParameter(false, "fadeEdges", None),
+      DoubleParameter(0.4, 0.1, 2.0, "edgeThickness", None),
+      IntegerParameter(0xff2200aa, 0xff000000, 0xffffffff, "edgeColor", None)
     )
     mOps += "Crystallize" -> new MetaImageOp(classOf[CrystallizeFilter], params)
     params = Seq(
-      new BooleanParameter(true, "emboss", None),
-      new DoubleParameter(2.0, 0.0, Math.PI, "azimuth", None),
-      new DoubleParameter(0.4, 0.0, Math.PI / 2.0, "elevation", None),
-      new DoubleParameter(0.5, 0.1, 2.5, "bumpHeight", None)
+      BooleanParameter(true, "emboss", None),
+      DoubleParameter(2.0, 0.0, Math.PI, "azimuth", None),
+      DoubleParameter(0.4, 0.0, Math.PI / 2.0, "elevation", None),
+      DoubleParameter(0.5, 0.1, 2.5, "bumpHeight", None)
     )
     mOps += "Emboss" -> new MetaImageOp(classOf[EmbossFilter], params)
     mOps += "Equalize" -> new MetaImageOp(new EqualizeFilter)
     mOps += "Fractal Noise" -> ProcessingOperators.createFractalOp
     params = Seq(
-      new BooleanParameter(true, "useImageColors", None),
-      new DoubleParameter(0.9, 0.01, 2.0, "turbulence", None),
-      new DoubleParameter(1.0, 0.01, 3.0, "scaling", None),
-      new BooleanParameter(true, "useImageColors", None)
+      BooleanParameter(true, "useImageColors", None),
+      DoubleParameter(0.9, 0.01, 2.0, "turbulence", None),
+      DoubleParameter(1.0, 0.01, 3.0, "scaling", None),
+      BooleanParameter(true, "useImageColors", None)
     )
     mOps += "Plasma" -> new MetaImageOp(classOf[PlasmaFilter], params)
     params = Seq(
@@ -227,83 +229,83 @@ class ProcessingOperators() {
     params = Seq(
       StringParameter(RippleFilter.RippleType.SINE.ordinal,
         RippleFilter.RippleType.values.map(_.toString).toIndexedSeq, "waveType", None),
-      new DoubleParameter(5.0, 0.0, 10.0, "xAmplitude", None),
-      new DoubleParameter(0.0, 0.0, 10.0, "yAmplitude", None),
-      new DoubleParameter(16, 1, 64, "xWavelength", None),
-      new DoubleParameter(16, 1, 64, "yWavelength", None)
+      DoubleParameter(5.0, 0.0, 10.0, "xAmplitude", None),
+      DoubleParameter(0.0, 0.0, 10.0, "yAmplitude", None),
+      DoubleParameter(16, 1, 64, "xWavelength", None),
+      DoubleParameter(16, 1, 64, "yWavelength", None)
     )
     mOps += "Ripple" -> new MetaImageOp(classOf[RippleFilter], params)
     params = Seq(
       StringParameter(EdgeAction.WRAP.ordinal, EdgeAction.values.map(_.toString).toIndexedSeq, "edgeAction", None),
-      new DoubleParameter(2.0, 0.5, 6.0, "scale", None)
+      DoubleParameter(2.0, 0.5, 6.0, "scale", None)
     )
     mOps += "Diffuse" -> new MetaImageOp(classOf[DiffuseFilter], params)
     params = Seq(
-      new DoubleParameter(1.0, 0.1, 5.0, "redGamma", None),
-      new DoubleParameter(1.0, 0.1, 5.0, "greenGamma", None),
-      new DoubleParameter(1.0, 0.1, 5.0, "blueGamma", None)
+      DoubleParameter(1.0, 0.1, 5.0, "redGamma", None),
+      DoubleParameter(1.0, 0.1, 5.0, "greenGamma", None),
+      DoubleParameter(1.0, 0.1, 5.0, "blueGamma", None)
     )
     mOps += "Gamma" -> new MetaImageOp(classOf[GammaFilter], params)
     params = Seq(
       StringParameter(LightFilter.BumpShapeType.NONE.ordinal,
         LightFilter.BumpShapeType.values.map(_.toString).toIndexedSeq, "bumpShape", None),
-      new DoubleParameter(.5, 0.1, 2.0, "bumpHeight", None),
-      new DoubleParameter(0.0, 0.0, 3.0, "bumpSoftness", None),
-      new DoubleParameter(10000.0, 10.0, 10000.0, "viewDistance", None)
+      DoubleParameter(.5, 0.1, 2.0, "bumpHeight", None),
+      DoubleParameter(0.0, 0.0, 3.0, "bumpSoftness", None),
+      DoubleParameter(10000.0, 10.0, 10000.0, "viewDistance", None)
     )
     mOps += "Light" -> new MetaImageOp(classOf[LightFilter], params)
     params = Seq(
-      new DoubleParameter(1.0, 0.8, 5.0, "amount", None),
-      new DoubleParameter(1.0, 0.5, 16.0, "turbulence", None),
-      new DoubleParameter(6.0, 1.0, 100.0, "xScale", None),
-      new DoubleParameter(6.0, 1.0, 100.0, "yScale", None)
+      DoubleParameter(1.0, 0.8, 5.0, "amount", None),
+      DoubleParameter(1.0, 0.5, 16.0, "turbulence", None),
+      DoubleParameter(6.0, 1.0, 100.0, "xScale", None),
+      DoubleParameter(6.0, 1.0, 100.0, "yScale", None)
     )
     mOps += "Marble" -> new MetaImageOp(classOf[MarbleFilter], params)
     params = Seq(
-      new DoubleParameter(1.0, 0.5, 10.0, "turbulence", None),
-      new DoubleParameter(0.5, 0.1, 5.0, "turbulenceFactor", None),
-      new DoubleParameter(32.0, 8.0, 128.0, "scale", None),
-      new DoubleParameter(0.0, 0.0, Math.PI, "angle", None),
-      new DoubleParameter(1.0, 0.5, 10.0, "stretch", None),
-      new DoubleParameter(1.0, 0.5, 6.0, "brightness", None)
+      DoubleParameter(1.0, 0.5, 10.0, "turbulence", None),
+      DoubleParameter(0.5, 0.1, 5.0, "turbulenceFactor", None),
+      DoubleParameter(32.0, 8.0, 128.0, "scale", None),
+      DoubleParameter(0.0, 0.0, Math.PI, "angle", None),
+      DoubleParameter(1.0, 0.5, 10.0, "stretch", None),
+      DoubleParameter(1.0, 0.5, 6.0, "brightness", None)
     )
     mOps += "MarbleTexture" -> new MetaImageOp(classOf[MarbleTexFilter], params)
     params = Seq(
-      new BooleanParameter(true, "useOpacity", None),
-      new DoubleParameter(1.0, 0.1, 1.0, "opacity", None),
-      new DoubleParameter(0.5, 0.4, 0.9, "centreY", None)
+      BooleanParameter(true, "useOpacity", None),
+      DoubleParameter(1.0, 0.1, 1.0, "opacity", None),
+      DoubleParameter(0.5, 0.4, 0.9, "centreY", None)
     )
     mOps += "Mirror" -> new MetaImageOp(classOf[MirrorFilter], params)
     params = Seq(
-      new BooleanParameter(false, "raysOnly", None),
-      new DoubleParameter(0.5, 0.1, 1.0, "opacity", None),
-      new DoubleParameter(0.5, 0.1, 1.0, "threshold", None),
-      new DoubleParameter(0.5, 0.0, 1.0, "strength", None)
+      BooleanParameter(false, "raysOnly", None),
+      DoubleParameter(0.5, 0.1, 1.0, "opacity", None),
+      DoubleParameter(0.5, 0.1, 1.0, "threshold", None),
+      DoubleParameter(0.5, 0.0, 1.0, "strength", None)
     )
     mOps += "Rays" -> new MetaImageOp(classOf[RaysFilter], params)
     params = Seq(
-      new DoubleParameter(0.5, 0.2, 2.0, "amount", None)
+      DoubleParameter(0.5, 0.2, 2.0, "amount", None)
     )
     mOps += "Saturation" -> new MetaImageOp(classOf[SaturationFilter], params)
     params = Seq(
-      new BooleanParameter(false, "shadowOnly", None),
-      new BooleanParameter(false, "addMargins", None),
-      new DoubleParameter(0.5, 0.0, 1.0, "opacity", None),
-      new DoubleParameter(5.0, 0.0, 10.0, "radius", None),
-      new DoubleParameter(Math.PI * 6 / 4, 0.0, 2 * Math.PI, "angle", None),
-      new DoubleParameter(5.0, 1.0, 10.0, "distance", None),
-      new IntegerParameter(0xff220066, 0xff000000, 0xffffffff, "shadowColor", None)
+      BooleanParameter(false, "shadowOnly", None),
+      BooleanParameter(false, "addMargins", None),
+      DoubleParameter(0.5, 0.0, 1.0, "opacity", None),
+      DoubleParameter(5.0, 0.0, 10.0, "radius", None),
+      DoubleParameter(Math.PI * 6 / 4, 0.0, 2 * Math.PI, "angle", None),
+      DoubleParameter(5.0, 1.0, 10.0, "distance", None),
+      IntegerParameter(0xff220066, 0xff000000, 0xffffffff, "shadowColor", None)
     )
     mOps += "Shadow" -> new MetaImageOp(classOf[ShadowFilter], params)
     mOps += "Kaleidoscope" -> ProcessingOperators.createKaleidoscopeOp
     params = Seq(
-      new IntegerParameter(127, 0, 127, "lowerThreshold", None),
-      new IntegerParameter(127, 127, 255, "upperThreshold", None)
+      IntegerParameter(127, 0, 127, "lowerThreshold", None),
+      IntegerParameter(127, 127, 255, "upperThreshold", None)
     )
     mOps += "Threshold" -> new MetaImageOp(classOf[ThresholdFilter], params)
     params = Seq(
-      new IntegerParameter(40, 8, 1000, "width", None),
-      new IntegerParameter(40, 8, 1000, "height", None)
+      IntegerParameter(40, 8, 1000, "width", None),
+      IntegerParameter(40, 8, 1000, "height", None)
     )
     mOps += "Scale" -> new MetaImageOp(classOf[ScaleFilter], params)
     /*

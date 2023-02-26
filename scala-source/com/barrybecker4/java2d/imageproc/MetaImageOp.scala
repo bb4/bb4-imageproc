@@ -96,9 +96,9 @@ class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic
       val paramType: Class[_] = param.getType
 
       val arg =
-        if (paramType == classOf[Float]) new java.lang.Float(param.getValue.toFloat)
-        else if (paramType == classOf[Int]) new java.lang.Integer(param.getValue.toInt)
-        else if (paramType == classOf[Boolean]) new java.lang.Boolean(param.getNaturalValue.asInstanceOf[Boolean])
+        if (paramType == classOf[Float]) param.getValue.toFloat
+        else if (paramType == classOf[Int]) param.getValue.toInt
+        else if (paramType == classOf[Boolean]) param.getNaturalValue.asInstanceOf[Boolean]
         else if (paramType == classOf[String]) param.getNaturalValue.asInstanceOf[String]
         else throw new IllegalArgumentException("Unexpected param type = " + paramType)
 
