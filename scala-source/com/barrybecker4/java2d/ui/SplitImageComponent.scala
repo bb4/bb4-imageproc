@@ -1,5 +1,8 @@
 package com.barrybecker4.java2d.ui
 
+import scala.compiletime.uninitialized
+import scala.util.{Left, Right}
+
 import com.barrybecker4.java2d.Utilities
 import javax.swing._
 import java.awt._
@@ -11,33 +14,32 @@ import java.awt.image.BufferedImage
 
 
 /**
-  * Shows an image that can be split dow the middle according to where the user clicks.
+  * Shows an image that can be split down the middle according to where the user clicks.
   * There are left and right images shown on either side of the split.
   * @author Barry Becker
   */
-class SplitImageComponent(path: String, image: BufferedImage) extends JPanel {
-  private var mImage: BufferedImage = _
-  private var mSecondImage: BufferedImage = _
+class SplitImageComponent private (source: Either[String, BufferedImage]) extends JPanel:
+  private var mImage: BufferedImage = uninitialized
+  private var mSecondImage: BufferedImage = uninitialized
   private var mSplitX = 0
 
-  assert (path != null || image != null)
-  if (path != null) setImage(path)
-  else setImage(image)
+  source match
+    case Left(path)   => setImageFromResource(path)
+    case Right(image) => mImage = image
   init()
 
-  /** @param path resource path to image */
-  def this(path: String) = {
-    this(path, null)
-  }
+  def this(path: String) = this(Left(path))
 
-  def this(image: BufferedImage) = {
-    this(null, image)
-  }
+  def this(image: BufferedImage) = this(Right(image))
 
   def setImage(path: String): Unit = {
-    val image = Utilities.blockingLoad(getClass.getResource(path))
+    val image = Utilities.blockingLoad(path)
     mImage = Utilities.makeBufferedImage(image)
   }
+
+  private def setImageFromResource(path: String): Unit =
+    val image = Utilities.blockingLoad(getClass.getResource(path))
+    mImage = Utilities.makeBufferedImage(image)
 
   def setImage(image: BufferedImage): Unit = {
     mImage = image
@@ -79,8 +81,6 @@ class SplitImageComponent(path: String, image: BufferedImage) extends JPanel {
     val height: Int = getSize().height
     val splitX = getSplitX
     clear(g2)
-    // Clip the first image, if appropriate,
-    //   to be on the right side of the split.
     if (splitX != 0 && mSecondImage != null) {
       val firstClip = new Rectangle(splitX, 0, width - splitX, height)
       g2.setClip(firstClip)
@@ -90,13 +90,12 @@ class SplitImageComponent(path: String, image: BufferedImage) extends JPanel {
     val secondClip = new Rectangle(0, 0, splitX, height)
     g2.setClip(secondClip)
     g2.drawImage(mSecondImage, 0, 0, null)
-    val splitLine = new Line2D.Float(splitX, 0, splitX, height)
+    val splitLine = new Line2D.Float(splitX.toFloat, 0f, splitX.toFloat, height.toFloat)
     g2.setClip(null)
     g2.setColor(Color.white)
     g2.draw(splitLine)
   }
 
-  /** Explicitly clear the window.  */
   private def clear(g2: Graphics2D): Unit = {
     val width = getSize().width
     val height = getSize().height
@@ -118,4 +117,3 @@ class SplitImageComponent(path: String, image: BufferedImage) extends JPanel {
     }
     new Dimension(width, height)
   }
-}

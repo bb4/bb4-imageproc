@@ -11,10 +11,14 @@ import java.awt.Toolkit
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
+import java.io.File
 import java.net.URL
+import javax.imageio.ImageIO
+import org.slf4j.LoggerFactory
 
 
 object Utilities {
+  private val log = LoggerFactory.getLogger("com.barrybecker4.java2d.Utilities")
   private val sComponent = new Component() {}
   private val sTracker = new MediaTracker(sComponent)
   private var sID = 0
@@ -32,13 +36,20 @@ object Utilities {
     sTracker.addImage(image, id)
     try sTracker.waitForID(id)
     catch {
-      case ie: InterruptedException =>
+      case _: InterruptedException =>
         return false
     }
     !sTracker.isErrorID(id)
   }
 
+  /** Prefer [[ImageIO]] for real files; fall back to [[Toolkit]] (e.g. non-file paths). */
   def blockingLoad(path: String): Image = {
+    val file = new File(path)
+    if (file.isFile) {
+      val bi = ImageIO.read(file)
+      if (bi != null) return bi
+      log.debug("ImageIO.read returned null for path {}", path)
+    }
     val image = Toolkit.getDefaultToolkit.getImage(path)
     if (!waitForImage(image)) return null
     image
@@ -52,7 +63,7 @@ object Utilities {
 
   def makeBufferedImage(image: Image): BufferedImage = {
     if (image == null) {
-      println("Warning image is null")
+      log.debug("makeBufferedImage called with null image")
       return null
     }
     makeBufferedImage(image, BufferedImage.TYPE_INT_ARGB)

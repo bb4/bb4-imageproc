@@ -14,6 +14,7 @@ bb4 {
 }
 
 dependencies {
+    implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'com.barrybecker4:bb4-optimization:2.0-SNAPSHOT'
     implementation 'com.barrybecker4:bb4-ui:2.0-SNAPSHOT'
     implementation 'com.barrybecker4:bb4-common:2.0-SNAPSHOT'
@@ -25,4 +26,11 @@ jar {
     include 'com/barrybecker4/java2d/imageproc/**/*.class'
     include 'com/barrybecker4/java2d/ui/**/*.class'
     include 'com/barrybecker4/java2d/*.class'
+}
+
+tasks.register('runSpaceInvaders', JavaExec) {
+    group = 'application'
+    description = 'Runs the Space Invaders demo'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.barrybecker4.java2d.spaceinvaders.SpaceInvadersGame'
 }

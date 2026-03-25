@@ -1,18 +1,31 @@
 /** Copyright by Barry G. Becker, 2011-2018. Licensed under MIT License: http://www.opensource.org/licenses/MIT  */
 package com.barrybecker4.java2d.imageproc
 
-import com.barrybecker4.optimization.parameter.redistribution.BooleanRedistribution
-
 import java.awt.image.{ConvolveOp, Kernel, LookupOp, ShortLookupTable}
+
 import com.barrybecker4.optimization.parameter.types.*
 import com.jhlabs.image.*
 
+import scala.collection.mutable
 
 /**
   * A set of  available image processing operations.
   * @author Barry Becker
   */
 object ProcessingOperators {
+
+  private type Registry = mutable.Map[String, MetaImageOp]
+
+  /** Builds the operator registry (single place initialization runs). */
+  private[imageproc] def buildRegistry(): Map[String, MetaImageOp] = {
+    val b = mutable.Map.empty[String, MetaImageOp]
+    registerConvolutions(b)
+    registerColorOps(b)
+    registerJHLabsPart1(b)
+    registerJHLabsPart2(b)
+    registerJHLabsPart3(b)
+    b.toMap
+  }
 
   private def createCausticsOp: MetaImageOp = {
     val params = Seq(
@@ -31,9 +44,9 @@ object ProcessingOperators {
     val specValueProbs: Array[Double] = Array(0.6)
 
     val params = Seq(
-      BooleanParameter(true, "useColor"),// this gives scala 3 error
+      BooleanParameter(true, "useColor", None),
       IntegerParameter.createDiscreteParameter(CellularFilter.GridType.RANDOM.ordinal,
-      0, CellularFilter.GridType.values.length, "gridType", specValues, specValueProbs),
+        0, CellularFilter.GridType.values.length, "gridType", specValues, specValueProbs),
       IntegerParameter(1, 1, 20, "turbulence", None),
       DoubleParameter(0.0, 0.0, 1.0, "F1", None),
       DoubleParameter(0.0, 0.0, 1.0, "F2", None),
@@ -41,7 +54,7 @@ object ProcessingOperators {
       DoubleParameter(.5, 0.0, 1.0, "amount", None),
       DoubleParameter(1.0, 0.0, 2.0, "gradientCoefficient", None),
       DoubleParameter(1.0, 1.0, 30.0, "stretch", None),
-      DoubleParameter(0.0, 0.0, Math.PI, "angle", None), // in radians
+      DoubleParameter(0.0, 0.0, Math.PI, "angle", None),
       DoubleParameter(1.0, 0.0, 5.0, "angleCoefficient", None),
       IntegerParameter(1, 1, 6, "distancePower", None),
       DoubleParameter(16.0, 0.1, 64.0, "scale", None)
@@ -114,41 +127,19 @@ object ProcessingOperators {
     )
     new MetaImageOp(classOf[KaleidoscopeFilter], params)
   }
-}
 
-class ProcessingOperators() {
-  createOps()
-  private var mOps: Map[String, MetaImageOp] = _
-
-  def getOperation(key: String): MetaImageOp = mOps(key)
-
-  /*** @return a sorted list of the operators. */
-  def getSortedKeys: java.awt.List = {
-    val list = new java.awt.List()
-    for (item <- mOps.keySet.toSeq.sorted)
-      list.add(item)
-    list
-  }
-
-  private def createOps(): Unit = {
-    mOps = Map[String, MetaImageOp]()
-    createConvolutions()
-    createColorOps()
-    createJHLabsOps()
-  }
-
-  private def createConvolutions(): Unit = {
+  private def registerConvolutions(b: Registry): Unit = {
     val ninth: Float = 1.0f / 9.0f
     val blurKernel: Array[Float] = Array(ninth, ninth, ninth, ninth, ninth, ninth, ninth, ninth, ninth)
-    mOps += "Blur" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, blurKernel), ConvolveOp.EDGE_NO_OP, null))
+    b += "Blur" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, blurKernel), ConvolveOp.EDGE_NO_OP, null))
     val edge: Array[Float] = Array(0f, -0.8f, 0f, -0.8f, 4.0f, -0.8f, 0f, -0.8f, 0f)
-    mOps += "Edge detector" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, edge), ConvolveOp.EDGE_NO_OP, null))
+    b += "Edge detector" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, edge), ConvolveOp.EDGE_NO_OP, null))
     val sharp: Array[Float] = Array(0f, -1f, 0f, -1f, 5f, -1f, 0f, -1f, 0f)
-    mOps += "Sharpen" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, sharp)))
+    b += "Sharpen" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, sharp)))
   }
 
-  private def createColorOps(): Unit = {
-    mOps += "Grayscale" -> new MetaImageOp(new GrayscaleFilter)
+  private def registerColorOps(b: Registry): Unit = {
+    b += "Grayscale" -> new MetaImageOp(new GrayscaleFilter)
     val brighten: Array[Short] = new Array[Short](256)
     val betterBrighten: Array[Short] = new Array[Short](256)
     val posterize: Array[Short] = new Array[Short](256)
@@ -163,69 +154,66 @@ class ProcessingOperators() {
       invert(i) = (255 - i).toShort
       straight(i) = i.toShort
       zero(i) = 0.toShort
-        i += 1
+      i += 1
     }
     val brightenTable: Array[Array[Short]] = Array(brighten, brighten, brighten, straight)
     val betterBrightenTable: Array[Array[Short]] = Array(betterBrighten, betterBrighten, betterBrighten, straight)
     val posterizeTable: Array[Array[Short]] = Array(posterize, posterize, posterize, straight)
     val invertTable: Array[Array[Short]] = Array(invert, invert, invert, straight)
-    mOps += "Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, brightenTable), null))
-    mOps += "Better Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, betterBrightenTable), null))
-    mOps += "Posterize" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, posterizeTable), null))
-    mOps += "Invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, invertTable), null))
+    b += "Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, brightenTable), null))
+    b += "Better Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, betterBrightenTable), null))
+    b += "Posterize" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, posterizeTable), null))
+    b += "Invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, invertTable), null))
     val redOnly: Array[Array[Short]] = Array(invert, straight, straight, straight)
     val greenOnly: Array[Array[Short]] = Array(straight, invert, straight, straight)
     val blueOnly: Array[Array[Short]] = Array(straight, straight, invert, straight)
-    mOps += "Red invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redOnly), null))
-    mOps += "Green invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenOnly), null))
-    mOps += "Blue invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueOnly), null))
-    // did not have 4th arg initially
+    b += "Red invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redOnly), null))
+    b += "Green invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenOnly), null))
+    b += "Blue invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueOnly), null))
     val redRemove: Array[Array[Short]] = Array(zero, straight, straight, straight)
     val greenRemove: Array[Array[Short]] = Array(straight, zero, straight, straight)
     val blueRemove: Array[Array[Short]] = Array(straight, straight, zero, straight)
-    mOps += "Red remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redRemove), null))
-    mOps += "Green remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenRemove), null))
-    mOps += "Blue remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueRemove), null))
+    b += "Red remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redRemove), null))
+    b += "Green remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenRemove), null))
+    b += "Blue remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueRemove), null))
   }
 
-  private def createJHLabsOps(): Unit = {
-
-    mOps += "Caustics" -> ProcessingOperators.createCausticsOp
+  private def registerJHLabsPart1(b: Registry): Unit = {
+    b += "Caustics" -> createCausticsOp
     var params: Seq[AbstractParameter] = Seq(
       DoubleParameter.createGaussianParameter(1.0, 0.2, 1.8,
         "height", 0.5, 0.2)
     )
-    mOps += "Bumps" -> new MetaImageOp(classOf[BumpFilter], params)
-    mOps += "Cellular" -> ProcessingOperators.createCellularOp
-    mOps += "Contour" -> ProcessingOperators.createContourOp
+    b += "Bumps" -> new MetaImageOp(classOf[BumpFilter], params)
+    b += "Cellular" -> createCellularOp
+    b += "Contour" -> createContourOp
     params = Seq(
       BooleanParameter(false, "fadeEdges", None),
       DoubleParameter(0.4, 0.1, 2.0, "edgeThickness", None),
       IntegerParameter(0xff2200aa, 0xff000000, 0xffffffff, "edgeColor", None)
     )
-    mOps += "Crystallize" -> new MetaImageOp(classOf[CrystallizeFilter], params)
+    b += "Crystallize" -> new MetaImageOp(classOf[CrystallizeFilter], params)
     params = Seq(
       BooleanParameter(true, "emboss", None),
       DoubleParameter(2.0, 0.0, Math.PI, "azimuth", None),
       DoubleParameter(0.4, 0.0, Math.PI / 2.0, "elevation", None),
       DoubleParameter(0.5, 0.1, 2.5, "bumpHeight", None)
     )
-    mOps += "Emboss" -> new MetaImageOp(classOf[EmbossFilter], params)
-    mOps += "Equalize" -> new MetaImageOp(new EqualizeFilter)
-    mOps += "Fractal Noise" -> ProcessingOperators.createFractalOp
+    b += "Emboss" -> new MetaImageOp(classOf[EmbossFilter], params)
+    b += "Equalize" -> new MetaImageOp(new EqualizeFilter)
+    b += "Fractal Noise" -> createFractalOp
     params = Seq(
       BooleanParameter(true, "useImageColors", None),
       DoubleParameter(0.9, 0.01, 2.0, "turbulence", None),
-      DoubleParameter(1.0, 0.01, 3.0, "scaling", None),
-      BooleanParameter(true, "useImageColors", None)
+      DoubleParameter(1.0, 0.01, 3.0, "scaling", None)
     )
-    mOps += "Plasma" -> new MetaImageOp(classOf[PlasmaFilter], params)
+    b += "Plasma" -> new MetaImageOp(classOf[PlasmaFilter], params)
     params = Seq(
       StringParameter(PolarFilter.PolarMappingType.RECT_TO_POLAR.ordinal,
         PolarFilter.PolarMappingType.values.map(_.toString).toIndexedSeq, "type", None),
       StringParameter(EdgeAction.WRAP.ordinal, EdgeAction.values.map(_.toString).toIndexedSeq, "edgeAction", None)
     )
-    mOps += "Polar" -> new MetaImageOp(classOf[PolarFilter], params)
+    b += "Polar" -> new MetaImageOp(classOf[PolarFilter], params)
     params = Seq(
       StringParameter(RippleFilter.RippleType.SINE.ordinal,
         RippleFilter.RippleType.values.map(_.toString).toIndexedSeq, "waveType", None),
@@ -234,33 +222,36 @@ class ProcessingOperators() {
       DoubleParameter(16, 1, 64, "xWavelength", None),
       DoubleParameter(16, 1, 64, "yWavelength", None)
     )
-    mOps += "Ripple" -> new MetaImageOp(classOf[RippleFilter], params)
+    b += "Ripple" -> new MetaImageOp(classOf[RippleFilter], params)
     params = Seq(
       StringParameter(EdgeAction.WRAP.ordinal, EdgeAction.values.map(_.toString).toIndexedSeq, "edgeAction", None),
       DoubleParameter(2.0, 0.5, 6.0, "scale", None)
     )
-    mOps += "Diffuse" -> new MetaImageOp(classOf[DiffuseFilter], params)
+    b += "Diffuse" -> new MetaImageOp(classOf[DiffuseFilter], params)
     params = Seq(
       DoubleParameter(1.0, 0.1, 5.0, "redGamma", None),
       DoubleParameter(1.0, 0.1, 5.0, "greenGamma", None),
       DoubleParameter(1.0, 0.1, 5.0, "blueGamma", None)
     )
-    mOps += "Gamma" -> new MetaImageOp(classOf[GammaFilter], params)
-    params = Seq(
+    b += "Gamma" -> new MetaImageOp(classOf[GammaFilter], params)
+  }
+
+  private def registerJHLabsPart2(b: Registry): Unit = {
+    var params: Seq[AbstractParameter] = Seq(
       StringParameter(LightFilter.BumpShapeType.NONE.ordinal,
         LightFilter.BumpShapeType.values.map(_.toString).toIndexedSeq, "bumpShape", None),
       DoubleParameter(.5, 0.1, 2.0, "bumpHeight", None),
       DoubleParameter(0.0, 0.0, 3.0, "bumpSoftness", None),
       DoubleParameter(10000.0, 10.0, 10000.0, "viewDistance", None)
     )
-    mOps += "Light" -> new MetaImageOp(classOf[LightFilter], params)
+    b += "Light" -> new MetaImageOp(classOf[LightFilter], params)
     params = Seq(
       DoubleParameter(1.0, 0.8, 5.0, "amount", None),
       DoubleParameter(1.0, 0.5, 16.0, "turbulence", None),
       DoubleParameter(6.0, 1.0, 100.0, "xScale", None),
       DoubleParameter(6.0, 1.0, 100.0, "yScale", None)
     )
-    mOps += "Marble" -> new MetaImageOp(classOf[MarbleFilter], params)
+    b += "Marble" -> new MetaImageOp(classOf[MarbleFilter], params)
     params = Seq(
       DoubleParameter(1.0, 0.5, 10.0, "turbulence", None),
       DoubleParameter(0.5, 0.1, 5.0, "turbulenceFactor", None),
@@ -269,25 +260,28 @@ class ProcessingOperators() {
       DoubleParameter(1.0, 0.5, 10.0, "stretch", None),
       DoubleParameter(1.0, 0.5, 6.0, "brightness", None)
     )
-    mOps += "MarbleTexture" -> new MetaImageOp(classOf[MarbleTexFilter], params)
+    b += "MarbleTexture" -> new MetaImageOp(classOf[MarbleTexFilter], params)
     params = Seq(
       BooleanParameter(true, "useOpacity", None),
       DoubleParameter(1.0, 0.1, 1.0, "opacity", None),
       DoubleParameter(0.5, 0.4, 0.9, "centreY", None)
     )
-    mOps += "Mirror" -> new MetaImageOp(classOf[MirrorFilter], params)
+    b += "Mirror" -> new MetaImageOp(classOf[MirrorFilter], params)
     params = Seq(
       BooleanParameter(false, "raysOnly", None),
       DoubleParameter(0.5, 0.1, 1.0, "opacity", None),
       DoubleParameter(0.5, 0.1, 1.0, "threshold", None),
       DoubleParameter(0.5, 0.0, 1.0, "strength", None)
     )
-    mOps += "Rays" -> new MetaImageOp(classOf[RaysFilter], params)
+    b += "Rays" -> new MetaImageOp(classOf[RaysFilter], params)
     params = Seq(
       DoubleParameter(0.5, 0.2, 2.0, "amount", None)
     )
-    mOps += "Saturation" -> new MetaImageOp(classOf[SaturationFilter], params)
-    params = Seq(
+    b += "Saturation" -> new MetaImageOp(classOf[SaturationFilter], params)
+  }
+
+  private def registerJHLabsPart3(b: Registry): Unit = {
+    var params: Seq[AbstractParameter] = Seq(
       BooleanParameter(false, "shadowOnly", None),
       BooleanParameter(false, "addMargins", None),
       DoubleParameter(0.5, 0.0, 1.0, "opacity", None),
@@ -296,71 +290,32 @@ class ProcessingOperators() {
       DoubleParameter(5.0, 1.0, 10.0, "distance", None),
       IntegerParameter(0xff220066, 0xff000000, 0xffffffff, "shadowColor", None)
     )
-    mOps += "Shadow" -> new MetaImageOp(classOf[ShadowFilter], params)
-    mOps += "Kaleidoscope" -> ProcessingOperators.createKaleidoscopeOp
+    b += "Shadow" -> new MetaImageOp(classOf[ShadowFilter], params)
+    b += "Kaleidoscope" -> createKaleidoscopeOp
     params = Seq(
       IntegerParameter(127, 0, 127, "lowerThreshold", None),
       IntegerParameter(127, 127, 255, "upperThreshold", None)
     )
-    mOps += "Threshold" -> new MetaImageOp(classOf[ThresholdFilter], params)
+    b += "Threshold" -> new MetaImageOp(classOf[ThresholdFilter], params)
     params = Seq(
       IntegerParameter(40, 8, 1000, "width", None),
       IntegerParameter(40, 8, 1000, "height", None)
     )
-    mOps += "Scale" -> new MetaImageOp(classOf[ScaleFilter], params)
-    /*
-            mOps.put("Shine", new ShineFilter());
-            mOps.put("Gain", new GainFilter());
-            mOps.put("Glint", new GlintFilter());
-            mOps.put("Glow", new GlowFilter());
-            mOps.put("Lens Blur", new LensBlurFilter());
-            SwimFilter swimFilter = new SwimFilter();
-            swimFilter.setAmount(2.0f);
-            mOps.put("Swim", swimFilter);
-            WaterFilter waterDrop = new WaterFilter();
-            waterDrop.setCentreX((float)Math.random());
-            waterDrop.setCentreY((float)Math.random());
-            waterDrop.setRadius(10.0f + (float)(100.0 * Math.random()));
-            mOps.put("Water Drop", waterDrop);
-            mOps.put("Median", new MedianFilter());
+    b += "Scale" -> new MetaImageOp(classOf[ScaleFilter], params)
+  }
+}
 
-            //  float distance, float angle, float rotation, float zoom
-            mOps.put("Motion blur", new MotionBlurFilter(2.0f, 3.0f, 0.0f, 0.0f));
-            mOps.put("Pointillize", new PointillizeFilter());
-            mOps.put("Quantize", new QuantizeFilter());
+class ProcessingOperators() {
 
-            mOps.put("Blur (smart)", new SmartBlurFilter());
-            mOps.put("Smear", new SmearFilter());
-            mOps.put("Sparkle", new SparkleFilter());
-            mOps.put("Chrome", new ChromeFilter());
+  private val mOps: Map[String, MetaImageOp] = ProcessingOperators.buildRegistry()
 
-            TwirlFilter twirl = new TwirlFilter();
-            twirl.setAngle(1.0f);
-            twirl.setRadius(200.0f);
-            mOps.put("Twirl", twirl);
+  def getOperation(key: String): MetaImageOp = mOps(key)
 
-            // secondary
-            mOps.put("Weave", new WeaveFilter());
-            mOps.put("Wood", new WoodFilter());
-            mOps.put("Life", new LifeFilter());
-             *//* tricky
-            params = new ArrayList<>();
-            float x[] = {0f, 0.1f, 0.8f, 1f};
-            float y[] = {0f, 0.01f, .95f, 1f};
-            CurvesFilter.Curve c =
-                    new CurvesFilter.Curve(x, y);
-            curvesFilter.setCurve(c);
-            mOps.put("Curves", new MetaImageOp(CurvesFilter.class, params));
-            params = new ArrayList<>();
-            mOps.put("Diffusion", new MetaImageOp(DiffusionFilter.class, params));
-
-             //mOps.put("JavaLnf", new JavaLnFFilter());
-             //mOps.put("Shatter", new ShatterFilter());
-             //mOps.put("Sky", new SkyFilter());   // npe
-             //mOps.put("Scratch", new ScratchFilter());   white
-             //mOps.put("Shade", new ShadeFilter());
-             //mOps.put("Field Warp", new FieldWarpFilter());
-             // mOps.put("Skeleton", new SkeletonFilter());
-           */
+  /** @return a sorted list of the operators. */
+  def getSortedKeys: java.awt.List = {
+    val list = new java.awt.List()
+    for (item <- mOps.keySet.toSeq.sorted)
+      list.add(item)
+    list
   }
 }
