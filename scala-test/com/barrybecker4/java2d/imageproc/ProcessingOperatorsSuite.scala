@@ -1,10 +1,10 @@
 package com.barrybecker4.java2d.imageproc
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 import com.barrybecker4.common.testsupport.strip
 
 
-class ProcessingOperatorsSuite extends FunSuite {
+class ProcessingOperatorsSuite extends AnyFunSuite {
 
   private val ops = new ProcessingOperators()
 
