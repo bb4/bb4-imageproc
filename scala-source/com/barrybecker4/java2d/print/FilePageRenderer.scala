@@ -13,6 +13,7 @@ import scala.io.Source
   */
 class FilePageRenderer(val file: File, val pageFormat: PageFormat)
   extends JComponent with Printable {
+  import scala.compiletime.uninitialized
 
   private var mFontSize: Int = 12
   private val mFont: Font = new Font("Serif", Font.PLAIN, mFontSize)
@@ -28,7 +29,7 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
     * Each element represents a single page. Each page's elements is
     * a Vector containing Strings that are the lines for a particular page.
     */
-  private var pages: util.Vector[util.Vector[String]] = _
+  private var pages: util.Vector[util.Vector[String]] = uninitialized
 
 
   def paginate(pageFormat: PageFormat): Unit = {
@@ -61,15 +62,15 @@ class FilePageRenderer(val file: File, val pageFormat: PageFormat)
     g2.setPaint(Color.white)
     g2.fill(r)
     // Get the current page.
-    val page: util.Vector[_] = pages.elementAt(currentPage).asInstanceOf[util.Vector[_]]
+    val page = pages.elementAt(currentPage)
     // Draw all the lines for this page.
     g2.setFont(mFont)
     g2.setPaint(Color.black)
     val x: Float = 0
-    var y: Float = mFontSize
+    var y: Float = mFontSize.toFloat
     var i: Int = 0
     while (i < page.size) {
-      val line: String = page.elementAt(i).asInstanceOf[String]
+      val line: String = page.elementAt(i)
       if (line.length > 0) g2.drawString(line, x.toInt, y.toInt)
       y += mFontSize
       i += 1

@@ -16,11 +16,7 @@ abstract class Curve(pts: Array[Point2D]) {
 
   def contains(point: Point2D): Option[Point2D] = {
     val local = getControlPoint(point)
-    for (p <- pts) {
-      if (local.contains(p))
-        return Some(p)
-    }
-    None
+    pts.find(p => local.contains(p))
   }
 
   /** Draw all the points in the curve with the actively selected one highlighted */

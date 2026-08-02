@@ -9,16 +9,20 @@ import java.awt.event.MouseMotionListener
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object SmoothMove extends App {
+object SmoothMove {
+  def main(args: Array[String]): Unit = {
     new SmoothMove
+  }
 }
 
 class SmoothMove() extends ApplicationFrame("SmoothMove v1.0") with MouseMotionListener {
+  import scala.compiletime.uninitialized
+
   addMouseMotionListener(this)
   setVisible(true)
   private var mX = 0
   private var mY = 0
-  private var mImage: Image = _
+  private var mImage: Image = uninitialized
 
   override def mouseMoved(me: MouseEvent): Unit = {
     mX = me.getPoint.getX.toInt

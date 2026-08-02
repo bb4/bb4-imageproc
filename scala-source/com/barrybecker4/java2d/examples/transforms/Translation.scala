@@ -3,8 +3,10 @@ package com.barrybecker4.java2d.examples.transforms
 import java.awt.geom.AffineTransform
 
 
-object Translation extends App {
-  new Translation().getFrame
+object Translation {
+  def main(args: Array[String]): Unit = {
+    new Translation().getFrame
+  }
 }
 
 class Translation extends Transformers {

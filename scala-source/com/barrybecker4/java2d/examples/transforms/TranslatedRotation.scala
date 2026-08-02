@@ -2,8 +2,10 @@ package com.barrybecker4.java2d.examples.transforms
 
 import java.awt.geom.AffineTransform
 
-object TranslatedRotation extends App {
+object TranslatedRotation {
+  def main(args: Array[String]): Unit = {
     new TranslatedRotation().getFrame
+  }
 }
 
 class TranslatedRotation extends Transformers {

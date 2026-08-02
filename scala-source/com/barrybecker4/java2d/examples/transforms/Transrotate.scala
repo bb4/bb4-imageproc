@@ -3,8 +3,10 @@ package com.barrybecker4.java2d.examples.transforms
 import java.awt.geom.AffineTransform
 
 
-object Transrotate extends App {
-  new Transrotate().getFrame
+object Transrotate {
+  def main(args: Array[String]): Unit = {
+    new Transrotate().getFrame
+  }
 }
 
 class Transrotate extends Transformers {

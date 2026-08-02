@@ -3,8 +3,10 @@ package com.barrybecker4.java2d.examples.transforms
 import java.awt.geom.AffineTransform
 
 
-object Shear extends App {
-  new Shear().getFrame
+object Shear {
+  def main(args: Array[String]): Unit = {
+    new Shear().getFrame
+  }
 }
 
 class Shear extends Transformers {

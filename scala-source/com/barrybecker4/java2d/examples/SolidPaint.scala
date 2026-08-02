@@ -8,10 +8,12 @@ import java.awt.geom.Arc2D
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object SolidPaint extends App {
-  val f = new SolidPaint
-  f.setTitle("SolidPaint v1.0")
-  f.setSize(200, 200)
+object SolidPaint {
+  def main(args: Array[String]): Unit = {
+    val f = new SolidPaint
+    f.setTitle("SolidPaint v1.0")
+    f.setSize(200, 200)
+  }
 }
 
 class SolidPaint extends ApplicationFrame {

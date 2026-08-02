@@ -1,7 +1,7 @@
 plugins {
-    id 'com.barrybecker4.bb4.scala-library' version '2.0-SNAPSHOT'
-    id 'com.barrybecker4.bb4.publish' version '2.0-SNAPSHOT'
-    id 'com.barrybecker4.bb4.application' version '2.0-SNAPSHOT'
+    id 'com.barrybecker4.bb4.scala-library' version '2.0.0'
+    id 'com.barrybecker4.bb4.publish' version '2.0.0'
+    id 'com.barrybecker4.bb4.application' version '2.0.0'
 }
 
 description = 'Scala Java2D library and demos (based on code from Java 2D by J. Knudsen)'
@@ -15,9 +15,9 @@ bb4 {
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
-    implementation 'com.barrybecker4:bb4-optimization:2.0-SNAPSHOT'
-    implementation 'com.barrybecker4:bb4-ui:2.0-SNAPSHOT'
-    implementation 'com.barrybecker4:bb4-common:2.0-SNAPSHOT'
+    implementation 'com.barrybecker4:bb4-optimization:2.0.0'
+    implementation 'com.barrybecker4:bb4-ui:2.0.0'
+    implementation 'com.barrybecker4:bb4-common:2.0.0'
     implementation fileTree(dir: 'lib', include: 'jhlabs-1.0.3.jar')
 }
 

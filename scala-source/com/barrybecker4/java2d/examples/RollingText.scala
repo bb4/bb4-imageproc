@@ -9,14 +9,15 @@ import java.awt.geom.AffineTransform
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object RollingText extends App {
+object RollingText {
   private val TEXT = "This an example of some pleasant rolling text..."
   private val FONT = new Font("Serif", Font.PLAIN, 24)
 
-  val f = new RollingText.RollingTextFrame("RollingText")
-  f.setSize(new Dimension(920, 450))
-  f.setVisible(true)
-
+  def main(args: Array[String]): Unit = {
+    val f = new RollingText.RollingTextFrame("RollingText")
+    f.setSize(new Dimension(920, 450))
+    f.setVisible(true)
+  }
 
   class RollingTextFrame(title: String) extends ApplicationFrame(title) {
     override def paint(g: Graphics): Unit = {

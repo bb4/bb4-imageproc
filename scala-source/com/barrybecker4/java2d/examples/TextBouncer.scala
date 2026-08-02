@@ -25,40 +25,41 @@ object TextBouncerConstants {
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object TextBouncer extends App {
+object TextBouncer {
+  def main(args: Array[String]): Unit = {
+    var s = "Firenze"
+    val size = 64
+    if (args.length > 0)
+      s = args(0)
+    val controls = new Panel
+    val choice = new Choice
+    val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
+    val allFonts = ge.getAllFonts
 
-  var s = "Firenze"
-  val size = 64
-  if (args.length > 0)
-    s = args(0)
-  val controls = new Panel
-  val choice = new Choice
-  val ge = GraphicsEnvironment.getLocalGraphicsEnvironment
-  val allFonts = ge.getAllFonts
-
-  for (allFont <- allFonts) {
-    choice.addItem(allFont.getName)
+    for (allFont <- allFonts) {
+      choice.addItem(allFont.getName)
+    }
+    val defaultFont = new Font(allFonts(0).getName, Font.PLAIN, size)
+    val bouncer = new TextBouncer(s, defaultFont)
+    val f = new AnimationFrame(bouncer)
+    f.setFont(new Font("Serif", Font.PLAIN, 12))
+    controls.add(bouncer.createCheckbox("Antialiasing", ANTIALIASING))
+    controls.add(bouncer.createCheckbox("Gradient", GRADIENT))
+    controls.add(bouncer.createCheckbox("Shear", SHEAR))
+    controls.add(bouncer.createCheckbox("Rotate", ROTATE))
+    controls.add(bouncer.createCheckbox("Axes", AXES))
+    val fontControls = new Panel
+    choice.addItemListener((ie: ItemEvent) => {
+      val font = new Font(choice.getSelectedItem, Font.PLAIN, size)
+      bouncer.setFont(font)
+    })
+    fontControls.add(choice)
+    val allControls = new Panel(new GridLayout(2, 1))
+    allControls.add(controls)
+    allControls.add(fontControls)
+    f.add(allControls, BorderLayout.NORTH)
+    bouncer.setPaused(false)
   }
-  val defaultFont = new Font(allFonts(0).getName, Font.PLAIN, size)
-  val bouncer = new TextBouncer(s, defaultFont)
-  val f = new AnimationFrame(bouncer)
-  f.setFont(new Font("Serif", Font.PLAIN, 12))
-  controls.add(bouncer.createCheckbox("Antialiasing", ANTIALIASING))
-  controls.add(bouncer.createCheckbox("Gradient", GRADIENT))
-  controls.add(bouncer.createCheckbox("Shear", SHEAR))
-  controls.add(bouncer.createCheckbox("Rotate", ROTATE))
-  controls.add(bouncer.createCheckbox("Axes", AXES))
-  val fontControls = new Panel
-  choice.addItemListener((ie: ItemEvent) => {
-    val font = new Font(choice.getSelectedItem, Font.PLAIN, size)
-    bouncer.setFont(font)
-  })
-  fontControls.add(choice)
-  val allControls = new Panel(new GridLayout(2, 1))
-  allControls.add(controls)
-  allControls.add(fontControls)
-  f.add(allControls, BorderLayout.NORTH)
-  bouncer.setPaused(false)
 }
 
 class TextBouncer(var mString: String, val f: Font) extends AnimationComponent {

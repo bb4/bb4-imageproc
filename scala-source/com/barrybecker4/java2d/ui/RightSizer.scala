@@ -3,7 +3,7 @@ package com.barrybecker4.java2d.ui
 import com.barrybecker4.ui.application.ApplicationFrame
 import java.awt._
 import java.awt.image.ImageObserver
-import java.net.URL
+import java.net.{URI, URL}
 
 
 /**
@@ -16,7 +16,7 @@ object RightSizer {
   def main(args: Array[String]): Unit = {
     var url = DEFAULT_IMAGE_URL
     if (args.length > 0) url = args(0)
-    new RightSizer(new URL(url))
+    new RightSizer(URI.create(url).toURL)
   }
 }
 

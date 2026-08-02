@@ -46,6 +46,7 @@ object Bouncer {
 }
 
 class Bouncer() extends AnimationComponent {
+  import scala.compiletime.uninitialized
 
   private var mN = Bouncer.NUM_BALLS //38
   private var mPoints = new Array[Float](mN + 3)
@@ -68,7 +69,7 @@ class Bouncer() extends AnimationComponent {
   private var mAxes = false
   private var mClip = false
   private var mTheta = .0
-  private var mClipShape: Shape = _
+  private var mClipShape: Shape = uninitialized
 
   AppContext.initialize("ENGLISH",
     List[String]("com.barrybecker4.ui.message", "com.barrybecker4.java2d.examples.message"), new Log())

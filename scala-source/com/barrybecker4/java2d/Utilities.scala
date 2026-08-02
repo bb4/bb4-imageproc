@@ -42,7 +42,7 @@ object Utilities {
     !sTracker.isErrorID(id)
   }
 
-  /** Prefer [[ImageIO]] for real files; fall back to [[Toolkit]] (e.g. non-file paths). */
+  /** Prefer [[javax.imageio.ImageIO]] for real files; fall back to [[java.awt.Toolkit]] (e.g. non-file paths). */
   def blockingLoad(path: String): Image = {
     val file = new File(path)
     if (file.isFile) {

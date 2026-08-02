@@ -12,14 +12,15 @@ import java.awt.print.PrinterJob
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object OutlineImageableArea extends App {
-
-  val pj = PrinterJob.getPrinterJob
-  pj.setPrintable(new OutlineImageableArea.OutlinePrintable)
-  if (pj.printDialog) try
-    pj.print()
-  catch {
-    case e: PrinterException => println(e)
+object OutlineImageableArea {
+  def main(args: Array[String]): Unit = {
+    val pj = PrinterJob.getPrinterJob
+    pj.setPrintable(new OutlineImageableArea.OutlinePrintable)
+    if (pj.printDialog) try
+      pj.print()
+    catch {
+      case e: PrinterException => println(e)
+    }
   }
 
   final private[examples] class OutlinePrintable extends Printable {

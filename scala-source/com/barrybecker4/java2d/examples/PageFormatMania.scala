@@ -13,20 +13,21 @@ import java.awt.print.PrinterJob
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object PageFormatMania extends App {
-
-  val pj = PrinterJob.getPrinterJob
-  val pf = pj.defaultPage
-  val paper = new Paper
-  val margin = 36 // half inch
-  paper.setImageableArea(margin, margin, paper.getWidth - margin * 2, paper.getHeight - margin * 2)
-  pf.setPaper(paper)
-  pj.setPrintable(new PageFormatMania.ManiaPrintable, pf)
-  if (pj.printDialog) try
-    pj.print()
-  catch {
-    case e: PrinterException =>
-      System.out.println(e)
+object PageFormatMania {
+  def main(args: Array[String]): Unit = {
+    val pj = PrinterJob.getPrinterJob
+    val pf = pj.defaultPage
+    val paper = new Paper
+    val margin = 36 // half inch
+    paper.setImageableArea(margin, margin, paper.getWidth - margin * 2, paper.getHeight - margin * 2)
+    pf.setPaper(paper)
+    pj.setPrintable(new PageFormatMania.ManiaPrintable, pf)
+    if (pj.printDialog) try
+      pj.print()
+    catch {
+      case e: PrinterException =>
+        System.out.println(e)
+    }
   }
 
   private class ManiaPrintable extends Printable {

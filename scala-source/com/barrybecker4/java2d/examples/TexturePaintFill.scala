@@ -11,10 +11,12 @@ import java.io.IOException
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object TexturePaintFill extends App {
-  val f = new TexturePaintFill("roa2.jpg")
-  f.setTitle("TexturePaintFill v1.0")
-  f.setSize(200, 200)
+object TexturePaintFill {
+  def main(args: Array[String]): Unit = {
+    val f = new TexturePaintFill("roa2.jpg")
+    f.setTitle("TexturePaintFill v1.0")
+    f.setSize(200, 200)
+  }
 }
 
 class TexturePaintFill @throws[IOException]
@@ -26,7 +28,7 @@ class TexturePaintFill @throws[IOException]
     super.paint(g)
     val g2 = g.asInstanceOf[Graphics2D]
     val d: Dimension = getSize
-    val r = new RoundRectangle2D.Float(25, 35, d.width - 50, d.height - 50, 55, 55)
+    val r = new RoundRectangle2D.Float(25, 35, (d.width - 50).toFloat, (d.height - 50).toFloat, 55, 55)
     if (mImage != null) {
       // Create a texture rectangle with the same size as the texture image.
       val tr = new Rectangle2D.Double(0, 0, mImage.getWidth, mImage.getHeight)

@@ -25,11 +25,13 @@ object FilePrinter {
 }
 
 class FilePrinter() extends JFrame("FilePrinter v1.0") {
+  import scala.compiletime.uninitialized
+
   createUI()
   val pj: PrinterJob = PrinterJob.getPrinterJob
   private var mPageFormat = pj.defaultPage
-  private var mPageRenderer: FilePageRenderer = _
-  private var mTitle: String = _
+  private var mPageRenderer: FilePageRenderer = uninitialized
+  private var mTitle: String = uninitialized
   setVisible(true)
 
 

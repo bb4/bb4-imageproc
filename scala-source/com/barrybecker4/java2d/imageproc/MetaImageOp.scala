@@ -81,7 +81,7 @@ object MetaImageOp {
   * Information (like parameters) about the image operator.
   *
   * For dynamic operators (`isDynamic == true`), [[getInstance]] and [[getRandomInstance]] return the
-  * same [[BufferedImageOp]] instance and apply parameter changes via reflection in place. Callers must not
+  * same [[java.awt.image.BufferedImageOp]] instance and apply parameter changes via reflection in place. Callers must not
   * use that instance from multiple threads concurrently.
   *
   * @param op the meta op

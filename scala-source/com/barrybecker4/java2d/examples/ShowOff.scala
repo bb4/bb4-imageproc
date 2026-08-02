@@ -19,7 +19,8 @@ import java.io.IOException
   * background color will change.
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object ShowOff extends App {
+object ShowOff {
+  def main(args: Array[String]): Unit = {
     var filename = Utilities.DEFAULT_IMAGE_DIR + "Raphael.jpg"
     var message = "Java2D"
     var split = 4
@@ -32,6 +33,7 @@ object ShowOff extends App {
     f.getContentPane.add(showOff, BorderLayout.CENTER)
     f.center()
     f.setResizable(false)
+  }
 }
 
 /** @param filename the file name
@@ -39,9 +41,11 @@ object ShowOff extends App {
   * @param split  number of splits
   */
 class ShowOff(val filename: String, var message: String, var split: Int) extends Component {
+  import scala.compiletime.uninitialized
+
   val img: Image = Utilities.blockingLoad(getClass.getResource(filename))
   private var mImage = Utilities.makeBufferedImage(img)
-  private var mLayout: TextLayout = _
+  private var mLayout: TextLayout = uninitialized
 
   // Create a font.
   private var mFont = new Font("Serif", Font.PLAIN, 116)

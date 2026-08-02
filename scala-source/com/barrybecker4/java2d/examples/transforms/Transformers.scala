@@ -9,9 +9,9 @@ import java.awt.geom.Rectangle2D
 
 abstract class Transformers() extends Component {
 
-  private[transforms] val mLength = 54
-  private[transforms] val mArrowLength = 4
-  private[transforms] val mTickSize = 4
+  private[transforms] val mLength = 54f
+  private[transforms] val mArrowLength = 4f
+  private[transforms] val mTickSize = 4f
   private[transforms] var mAxes = createAxes
   private[transforms] var mShape = createShape
 
@@ -67,7 +67,7 @@ abstract class Transformers() extends Component {
 
   protected def createShape: Shape = {
     val cm = 72 / 2.54f
-    new Rectangle2D.Float(cm, cm, 2 * cm, cm)
+    new Rectangle2D.Float(cm, cm, 2f * cm, cm)
   }
 
   override def paint(g: Graphics): Unit = {

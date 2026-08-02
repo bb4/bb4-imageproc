@@ -10,8 +10,10 @@ import com.barrybecker4.ui.application.ApplicationFrame
 /**
   * Derived from code accompanying "Java 2D Graphics" by Jonathan Knudsen.
   */
-object Splines extends App {
-  new Splines
+object Splines {
+  def main(args: Array[String]): Unit = {
+    new Splines
+  }
 }
 
 class Splines() extends ApplicationFrame("Splines v1.0")

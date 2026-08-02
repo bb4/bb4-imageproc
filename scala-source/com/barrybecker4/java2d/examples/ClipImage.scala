@@ -19,10 +19,12 @@ object ClipImage {
 
 class ClipImage @throws[IOException]
 (title: String) extends ApplicationFrame(title) {
+  import scala.compiletime.uninitialized
+
   val filename: String = Utilities.DEFAULT_IMAGE_DIR + "roa2.jpg"
   val img: Image = Utilities.blockingLoad(getClass.getResource(filename))
   final private[examples] var image = Utilities.makeBufferedImage(img)
-  private var mClippingShape: Shape = _
+  private var mClippingShape: Shape = uninitialized
 
   override def paint(g: Graphics): Unit = {
     super.paint(g)

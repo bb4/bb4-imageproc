@@ -2,8 +2,10 @@ package com.barrybecker4.java2d.examples.transforms
 
 import java.awt.geom.AffineTransform
 
-object Scale extends App {
+object Scale {
+  def main(args: Array[String]): Unit = {
     new Scale().getFrame
+  }
 }
 
 class Scale extends Transformers {

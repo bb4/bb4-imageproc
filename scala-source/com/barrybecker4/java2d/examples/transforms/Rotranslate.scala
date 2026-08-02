@@ -3,8 +3,10 @@ package com.barrybecker4.java2d.examples.transforms
 import java.awt.geom.AffineTransform
 
 
-object Rotranslate extends App {
-  new Rotranslate().getFrame
+object Rotranslate {
+  def main(args: Array[String]): Unit = {
+    new Rotranslate().getFrame
+  }
 }
 
 class Rotranslate extends Transformers {
