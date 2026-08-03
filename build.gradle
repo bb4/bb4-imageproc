@@ -6,7 +6,7 @@ plugins {
 
 description = 'Scala Java2D library and demos (based on code from Java 2D by J. Knudsen)'
 group = 'com.barrybecker4'
-version = '2.0.0'
+version = '2.1-SNAPSHOT'
 
 bb4 {
     archivesBaseName.set('bb4-imageproc')
