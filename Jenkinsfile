@@ -1,3 +1,0 @@
-commonJenkinsPipeline(
-    language: 'scala'
-)
