@@ -311,11 +311,6 @@ class ProcessingOperators() {
 
   def getOperation(key: String): MetaImageOp = mOps(key)
 
-  /** @return a sorted list of the operators. */
-  def getSortedKeys: java.awt.List = {
-    val list = new java.awt.List()
-    for (item <- mOps.keySet.toSeq.sorted)
-      list.add(item)
-    list
-  }
+  /** @return sorted operator names (no AWT dependency; safe in headless CI). */
+  def getSortedKeys: Seq[String] = mOps.keySet.toSeq.sorted
 }

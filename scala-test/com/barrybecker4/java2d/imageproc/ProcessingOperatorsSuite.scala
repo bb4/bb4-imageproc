@@ -15,7 +15,7 @@ class ProcessingOperatorsSuite extends AnyFunSuite {
         | Edge detector, Emboss, Equalize, Fractal Noise, Gamma, Grayscale, Green invert, Green remove,
         | Invert, Kaleidoscope, Light, Marble, MarbleTexture, Mirror, Plasma, Polar, Posterize, Rays,
         | Red invert, Red remove, Ripple, Saturation, Scale, Shadow, Sharpen, Threshold""", "")) {
-      ops.getSortedKeys.getItems.mkString(", ")
+      ops.getSortedKeys.mkString(", ")
     }
   }
 

@@ -73,7 +73,9 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   protected def initializeUI(): Unit = {
     val pt = imageFrame.getLocation
     setLocation(pt.x - getSize.width, pt.y)
-    filterList = operations.getSortedKeys
+    filterList = new List()
+    for (item <- operations.getSortedKeys)
+      filterList.add(item)
     filterList.addItemListener(this)
     val loadButton = new Button("Load...")
     loadButton.addActionListener(this)
