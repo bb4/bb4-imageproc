@@ -12,8 +12,8 @@ abstract class Transformers() extends Component {
   private[transforms] val mLength = 54f
   private[transforms] val mArrowLength = 4f
   private[transforms] val mTickSize = 4f
-  private[transforms] var mAxes = createAxes
-  private[transforms] var mShape = createShape
+  private[transforms] val mAxes = createAxes
+  private[transforms] val mShape = createShape
 
   protected def createAxes: Shape = {
     val path = new GeneralPath
@@ -34,8 +34,7 @@ abstract class Transformers() extends Component {
     // Half-centimeter tick marks
     val cm = 72 / 2.54f
     val lengthCentimeter = mLength / cm
-    var i: Float = 0.5f
-    while (i < lengthCentimeter) {
+    Iterator.iterate(0.5f)(_ + 1.0f).takeWhile(_ < lengthCentimeter).foreach { i =>
       val tick = i * cm
       path.moveTo(tick, -mTickSize / 2)
       path.lineTo(tick, mTickSize / 2)
@@ -45,12 +44,10 @@ abstract class Transformers() extends Component {
       path.lineTo(mTickSize / 2, tick)
       path.moveTo(-mTickSize / 2, -tick)
       path.lineTo(mTickSize / 2, -tick)
-      i += 1.0f
     }
 
     // Full-centimeter tick marks
-    i = 1.0f
-    while (i < lengthCentimeter) {
+    Iterator.iterate(1.0f)(_ + 1.0f).takeWhile(_ < lengthCentimeter).foreach { i =>
       val tick = i * cm
       path.moveTo(tick, -mTickSize)
       path.lineTo(tick, mTickSize)
@@ -60,7 +57,6 @@ abstract class Transformers() extends Component {
       path.lineTo(mTickSize, tick)
       path.moveTo(-mTickSize, -tick)
       path.lineTo(mTickSize, -tick)
-      i += 1.0f
     }
     path
   }

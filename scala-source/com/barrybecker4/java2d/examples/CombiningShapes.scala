@@ -23,14 +23,14 @@ object CombiningShapes {
 }
 
 class CombiningShapes() extends JComponent { // Create the two shapes, a circle and a square.
-  private var mShapeOne = new Ellipse2D.Double(40, 20, 80, 80)
-  private var mShapeTwo = new Rectangle2D.Double(60, 40, 80, 80)
+  private val mShapeOne = new Ellipse2D.Double(40, 20, 80, 80)
+  private val mShapeTwo = new Rectangle2D.Double(60, 40, 80, 80)
   setBackground(Color.white)
   setLayout(new BorderLayout)
   // Create a panel to hold the combo box.
   val controls = new JPanel
   // Create the combo box with the names of the area operators.
-  private var mOptions = new JComboBox[String](
+  private val mOptions = new JComboBox[String](
     Array[String]("outline", "add", "intersection", "subtract", "exclusive or")
   )
   // Repaint ourselves when the selection changes.
