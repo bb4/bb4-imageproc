@@ -15,9 +15,9 @@ bb4 {
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
-    implementation 'com.barrybecker4:bb4-optimization:2.0.0'
-    implementation 'com.barrybecker4:bb4-ui:2.0.0'
-    implementation 'com.barrybecker4:bb4-common:2.0.0'
+    implementation 'com.barrybecker4:bb4-optimization:2.1-SNAPSHOT'
+    implementation 'com.barrybecker4:bb4-ui:2.1-SNAPSHOT'
+    implementation 'com.barrybecker4:bb4-common:2.1-SNAPSHOT'
     implementation fileTree(dir: 'lib', include: 'jhlabs-1.0.3.jar')
 }
 
