@@ -14,15 +14,14 @@ object RightSizer {
 
   @throws[Exception]
   def main(args: Array[String]): Unit = {
-    var url = DEFAULT_IMAGE_URL
-    if (args.length > 0) url = args(0)
+    val url = if (args.length > 0) args(0) else DEFAULT_IMAGE_URL
     new RightSizer(URI.create(url).toURL)
   }
 }
 
 class RightSizer(val url: URL) extends ApplicationFrame("RightSizer v1.0") {
 
-  private var image  = Toolkit.getDefaultToolkit.getImage(url)
+  private val image = Toolkit.getDefaultToolkit.getImage(url)
   rightSize()
 
   /** Set the frame size to the same size as the image (once it has loaded). */

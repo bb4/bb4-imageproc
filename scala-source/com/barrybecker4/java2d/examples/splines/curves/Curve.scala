@@ -22,13 +22,11 @@ abstract class Curve(pts: Array[Point2D]) {
   /** Draw all the points in the curve with the actively selected one highlighted */
   protected def drawPoints(g2: Graphics2D,
                            selectedPoint: Option[Point2D]): Unit = {
-    var i = 0
-    while (i < pts.length) { // If the point is selected, use the selected color.
-      if (selectedPoint.isDefined && (pts(i) eq selectedPoint.get))
+    for (p <- pts) {
+      if (selectedPoint.isDefined && (p eq selectedPoint.get))
         g2.setPaint(Color.red)
       else g2.setPaint(Color.blue)
-      g2.fill(getControlPoint(pts(i)))
-      i += 1
+      g2.fill(getControlPoint(p))
     }
   }
 }
