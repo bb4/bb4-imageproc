@@ -34,7 +34,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   private var statusLabel = new Label("")
   private var paramPanel: ParameterPanel = uninitialized
   private var filterList: java.awt.List = uninitialized
-  private var operations = new ProcessingOperators()
+  private val operations = new ProcessingOperators()
   createImageFrame(imageFile)
   initializeUI()
 
@@ -97,8 +97,7 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
     selectedOperationKey.foreach { key =>
       val metaOp = operations.getOperation(key)
       val op = metaOp.getInstance
-      var previous = imageFrame.getTitle + " + "
-      if (!accumulateCheckbox.getState) previous = ""
+      val previous = if (accumulateCheckbox.getState) imageFrame.getTitle + " + " else ""
       imageFrame.setTitle(previous + key)
       statusLabel.setText("Performing " + key + "...")
       withUiLocked:
@@ -129,8 +128,10 @@ class FilterSamplerApp(val imageFile: String) extends ApplicationFrame("Filter S
   }
 
   private def applyImageOperator(op: BufferedImageOp): Unit = {
-    var source = splitImageComponent.getSecondImage
-    if (source == null || !accumulateCheckbox.getState) source = splitImageComponent.getImage
+    val second = splitImageComponent.getSecondImage
+    val source =
+      if (second == null || !accumulateCheckbox.getState) splitImageComponent.getImage
+      else second
     val destination = op.filter(source, null)
     splitImageComponent.setSecondImage(destination)
     splitImageComponent.setSize(splitImageComponent.getPreferredSize)
