@@ -129,13 +129,9 @@ object ProcessingOperators {
   }
 
   private def registerConvolutions(b: Registry): Unit = {
-    val ninth: Float = 1.0f / 9.0f
-    val blurKernel: Array[Float] = Array(ninth, ninth, ninth, ninth, ninth, ninth, ninth, ninth, ninth)
-    b += "Blur" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, blurKernel), ConvolveOp.EDGE_NO_OP, null))
-    val edge: Array[Float] = Array(0f, -0.8f, 0f, -0.8f, 4.0f, -0.8f, 0f, -0.8f, 0f)
-    b += "Edge detector" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, edge), ConvolveOp.EDGE_NO_OP, null))
-    val sharp: Array[Float] = Array(0f, -1f, 0f, -1f, 5f, -1f, 0f, -1f, 0f)
-    b += "Sharpen" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, sharp)))
+    b += "Blur" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, ConvolutionKernels.blur), ConvolveOp.EDGE_NO_OP, null))
+    b += "Edge detector" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, ConvolutionKernels.edge), ConvolveOp.EDGE_NO_OP, null))
+    b += "Sharpen" -> new MetaImageOp(new ConvolveOp(new Kernel(3, 3, ConvolutionKernels.sharpen)))
   }
 
   private def registerColorOps(b: Registry): Unit = {
