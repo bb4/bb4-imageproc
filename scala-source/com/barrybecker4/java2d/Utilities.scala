@@ -1,18 +1,11 @@
 package com.barrybecker4.java2d
 
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Container
-import java.awt.Frame
-import java.awt.Graphics
-import java.awt.Image
-import java.awt.MediaTracker
-import java.awt.Toolkit
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
+import java.awt.{BorderLayout, Component, Container, Frame, Graphics, Image, MediaTracker, Toolkit}
+import java.awt.event.{WindowAdapter, WindowEvent}
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
+import java.util.concurrent.atomic.AtomicInteger
 import javax.imageio.ImageIO
 import org.slf4j.LoggerFactory
 
@@ -21,18 +14,14 @@ object Utilities {
   private val log = LoggerFactory.getLogger("com.barrybecker4.java2d.Utilities")
   private val sComponent = new Component() {}
   private val sTracker = new MediaTracker(sComponent)
-  private var sID = 0
+  private val sID = new AtomicInteger(0)
   val DEFAULT_IMAGE_DIR = "/com/barrybecker4/java2d/images/"
 
   /** @param image image to load
     * @return true when the image has been loaded.
     */
   def waitForImage(image: Image): Boolean = {
-    var id = 0
-    sComponent synchronized {
-      sID += 1
-      id = sID
-    }
+    val id = sID.incrementAndGet()
     sTracker.addImage(image, id)
     try sTracker.waitForID(id)
     catch {
