@@ -7,7 +7,6 @@ import java.lang.reflect.Method
 import com.barrybecker4.optimization.parameter.types.Parameter
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
 
@@ -24,7 +23,7 @@ object MetaImageOp {
   private def trace(msg: => String): Unit =
     if log.isTraceEnabled then log.trace(msg)
 
-  private def setterNameFor(propertyName: String): String =
+  private[imageproc] def setterNameFor(propertyName: String): String =
     "set" + propertyName.substring(0, 1).toUpperCase + propertyName.substring(1)
 
   private def newFilterInstance(opClass: Class[? <: BufferedImageOp]): BufferedImageOp =
@@ -34,7 +33,7 @@ object MetaImageOp {
         throw new IllegalArgumentException(s"Cannot construct $opClass (needs public no-arg constructor)", ex)
     }
 
-  private def coerceArgument(param: Parameter, paramType: Class[?]): AnyRef =
+  private[imageproc] def coerceArgument(param: Parameter, paramType: Class[?]): AnyRef =
     if paramType == classOf[Float] || paramType == java.lang.Float.TYPE then
       Float.box(param.getValue.toFloat)
     else if paramType == classOf[java.lang.Integer] || paramType == java.lang.Integer.TYPE then
@@ -65,7 +64,7 @@ object MetaImageOp {
         }
     }
 
-  private def alternateBoxedOrPrimitive(t: Class[?]): Class[?] =
+  private[imageproc] def alternateBoxedOrPrimitive(t: Class[?]): Class[?] =
     if t == java.lang.Integer.TYPE then classOf[java.lang.Integer]
     else if t == classOf[java.lang.Integer] then java.lang.Integer.TYPE
     else if t == java.lang.Double.TYPE then classOf[java.lang.Double]
@@ -138,9 +137,7 @@ class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic
 
   private def tweakParameters(filter: BufferedImageOp, randomVariance: Float): IndexedSeq[Parameter] = {
     MetaImageOp.trace(s"tweakParameters op=${filter.getClass.getSimpleName} randomVariance=$randomVariance")
-    val newParams = ArrayBuffer[Parameter]()
-
-    for p <- lastUsedParameters do
+    lastUsedParameters.map { p =>
       val methodName = MetaImageOp.setterNameFor(p.name)
       MetaImageOp.trace(s"setter=$methodName paramType=${p.getType}")
       val method = MetaImageOp.declaredSetter(filter.getClass, methodName, p.getType)
@@ -150,13 +147,12 @@ class MetaImageOp(op: BufferedImageOp, val parameters: Seq[Parameter], isDynamic
         else p
 
       MetaImageOp.trace(s"tweaked value=$param (min=${param.minValue} max=${param.maxValue} v=${param.getValue})")
-      newParams.append(param)
 
       val setterParamType = method.getParameterTypes.head
       val arg = MetaImageOp.coerceArgument(param, setterParamType)
       MetaImageOp.trace(s"invoke $methodName($arg)")
       MetaImageOp.invokeSetter(filter, method, arg)
-
-    newParams.toIndexedSeq
+      param
+    }
   }
 }

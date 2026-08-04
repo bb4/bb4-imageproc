@@ -4,7 +4,7 @@ import java.awt.RenderingHints
 import java.awt.geom.{Point2D, Rectangle2D}
 import java.awt.image.{BufferedImage, BufferedImageOp, ColorModel}
 
-import com.barrybecker4.optimization.parameter.types.DoubleParameter
+import com.barrybecker4.optimization.parameter.types.{BooleanParameter, DoubleParameter}
 import com.jhlabs.image.{BumpFilter, GrayscaleFilter}
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -63,4 +63,33 @@ class MetaImageOpSuite extends AnyFunSuite:
   test("secondary constructor instantiates JHLabs filter class") {
     val meta = new MetaImageOp(classOf[GrayscaleFilter], Seq())
     assert(meta.getInstance.isInstanceOf[GrayscaleFilter])
+  }
+
+  test("setterNameFor capitalizes first letter") {
+    assertResult("setHeight")(MetaImageOp.setterNameFor("height"))
+    assertResult("setX")(MetaImageOp.setterNameFor("x"))
+  }
+
+  test("alternateBoxedOrPrimitive swaps boxed and primitive") {
+    assertResult(classOf[java.lang.Integer])(MetaImageOp.alternateBoxedOrPrimitive(java.lang.Integer.TYPE))
+    assertResult(java.lang.Integer.TYPE)(MetaImageOp.alternateBoxedOrPrimitive(classOf[java.lang.Integer]))
+    assertResult(classOf[java.lang.Double])(MetaImageOp.alternateBoxedOrPrimitive(java.lang.Double.TYPE))
+    assertResult(java.lang.Boolean.TYPE)(MetaImageOp.alternateBoxedOrPrimitive(classOf[java.lang.Boolean]))
+  }
+
+  test("coerceArgument boxes numeric and boolean parameters") {
+    val d = DoubleParameter(1.5, 0.0, 2.0, "amount", None)
+    assertResult(1.5f)(MetaImageOp.coerceArgument(d, java.lang.Float.TYPE).asInstanceOf[java.lang.Float].floatValue())
+    assertResult(1)(MetaImageOp.coerceArgument(d, java.lang.Integer.TYPE).asInstanceOf[Integer].intValue())
+    assertResult(1.5)(MetaImageOp.coerceArgument(d, java.lang.Double.TYPE).asInstanceOf[java.lang.Double].doubleValue())
+
+    val b = BooleanParameter(true, "flag", None)
+    assertResult(true)(MetaImageOp.coerceArgument(b, java.lang.Boolean.TYPE).asInstanceOf[java.lang.Boolean].booleanValue())
+  }
+
+  test("coerceArgument rejects unsupported types") {
+    val d = DoubleParameter(1.0, 0.0, 2.0, "amount", None)
+    intercept[IllegalArgumentException] {
+      MetaImageOp.coerceArgument(d, classOf[java.lang.Long])
+    }
   }
