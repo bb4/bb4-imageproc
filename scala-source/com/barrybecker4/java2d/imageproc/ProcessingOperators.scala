@@ -139,43 +139,23 @@ object ProcessingOperators {
   }
 
   private def registerColorOps(b: Registry): Unit = {
+    val brighten = ColorLookupTables.table(ColorLookupTables.brighten)
+    val betterBrighten = ColorLookupTables.table(ColorLookupTables.betterBrighten)
+    val posterize = ColorLookupTables.table(ColorLookupTables.posterize)
+    val invert = ColorLookupTables.table(ColorLookupTables.invert)
+    val straight = ColorLookupTables.table(ColorLookupTables.identity)
+    val zero = ColorLookupTables.table(ColorLookupTables.zero)
     b += "Grayscale" -> new MetaImageOp(new GrayscaleFilter)
-    val brighten: Array[Short] = new Array[Short](256)
-    val betterBrighten: Array[Short] = new Array[Short](256)
-    val posterize: Array[Short] = new Array[Short](256)
-    val invert: Array[Short] = new Array[Short](256)
-    val straight: Array[Short] = new Array[Short](256)
-    val zero: Array[Short] = new Array[Short](256)
-    var i: Int = 0
-    while (i < 256) {
-      brighten(i) = (128 + i / 2).toShort
-      betterBrighten(i) = (Math.sqrt(i.toDouble / 255.0) * 255.0).toShort
-      posterize(i) = (i - (i % 32)).toShort
-      invert(i) = (255 - i).toShort
-      straight(i) = i.toShort
-      zero(i) = 0.toShort
-      i += 1
-    }
-    val brightenTable: Array[Array[Short]] = Array(brighten, brighten, brighten, straight)
-    val betterBrightenTable: Array[Array[Short]] = Array(betterBrighten, betterBrighten, betterBrighten, straight)
-    val posterizeTable: Array[Array[Short]] = Array(posterize, posterize, posterize, straight)
-    val invertTable: Array[Array[Short]] = Array(invert, invert, invert, straight)
-    b += "Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, brightenTable), null))
-    b += "Better Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, betterBrightenTable), null))
-    b += "Posterize" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, posterizeTable), null))
-    b += "Invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, invertTable), null))
-    val redOnly: Array[Array[Short]] = Array(invert, straight, straight, straight)
-    val greenOnly: Array[Array[Short]] = Array(straight, invert, straight, straight)
-    val blueOnly: Array[Array[Short]] = Array(straight, straight, invert, straight)
-    b += "Red invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redOnly), null))
-    b += "Green invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenOnly), null))
-    b += "Blue invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueOnly), null))
-    val redRemove: Array[Array[Short]] = Array(zero, straight, straight, straight)
-    val greenRemove: Array[Array[Short]] = Array(straight, zero, straight, straight)
-    val blueRemove: Array[Array[Short]] = Array(straight, straight, zero, straight)
-    b += "Red remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, redRemove), null))
-    b += "Green remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, greenRemove), null))
-    b += "Blue remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, blueRemove), null))
+    b += "Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, ColorLookupTables.rgbWithAlpha(brighten)), null))
+    b += "Better Brighten" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, ColorLookupTables.rgbWithAlpha(betterBrighten)), null))
+    b += "Posterize" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, ColorLookupTables.rgbWithAlpha(posterize)), null))
+    b += "Invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, ColorLookupTables.rgbWithAlpha(invert)), null))
+    b += "Red invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(invert, straight, straight, straight)), null))
+    b += "Green invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(straight, invert, straight, straight)), null))
+    b += "Blue invert" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(straight, straight, invert, straight)), null))
+    b += "Red remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(zero, straight, straight, straight)), null))
+    b += "Green remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(straight, zero, straight, straight)), null))
+    b += "Blue remove" -> new MetaImageOp(new LookupOp(new ShortLookupTable(0, Array(straight, straight, zero, straight)), null))
   }
 
   private def registerJHLabsPart1(b: Registry): Unit = {
