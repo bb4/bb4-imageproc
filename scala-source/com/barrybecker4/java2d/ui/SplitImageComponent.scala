@@ -1,8 +1,5 @@
 package com.barrybecker4.java2d.ui
 
-import scala.compiletime.uninitialized
-import scala.util.{Left, Right}
-
 import com.barrybecker4.java2d.Utilities
 import javax.swing._
 import java.awt._
@@ -19,13 +16,13 @@ import java.awt.image.BufferedImage
   * @author Barry Becker
   */
 class SplitImageComponent private (source: Either[String, BufferedImage]) extends JPanel:
-  private var mImage: BufferedImage = uninitialized
-  private var mSecondImage: BufferedImage = uninitialized
+  private var mImage: Option[BufferedImage] = None
+  private var mSecondImage: Option[BufferedImage] = None
   private var mSplitX = 0
 
   source match
     case Left(path)   => setImageFromResource(path)
-    case Right(image) => mImage = image
+    case Right(image) => mImage = Option(image)
   init()
 
   def this(path: String) = this(Left(path))
@@ -34,24 +31,27 @@ class SplitImageComponent private (source: Either[String, BufferedImage]) extend
 
   def setImage(path: String): Unit = {
     val image = Utilities.blockingLoad(path)
-    mImage = Utilities.makeBufferedImage(image)
+    mImage = Option(Utilities.makeBufferedImage(image))
   }
 
   private def setImageFromResource(path: String): Unit =
     val image = Utilities.blockingLoad(getClass.getResource(path))
-    mImage = Utilities.makeBufferedImage(image)
+    mImage = Option(Utilities.makeBufferedImage(image))
 
   def setImage(image: BufferedImage): Unit = {
-    mImage = image
+    mImage = Option(image)
   }
 
   def setSecondImage(image: BufferedImage): Unit = {
-    mSecondImage = image
+    mSecondImage = Option(image)
     repaint()
   }
 
-  def getImage: BufferedImage = mImage
-  def getSecondImage: BufferedImage = mSecondImage
+  /** May be null when no primary image has been loaded. */
+  def getImage: BufferedImage = mImage.orNull
+
+  /** May be null when no second image has been set. */
+  def getSecondImage: BufferedImage = mSecondImage.orNull
 
   private def init(): Unit = {
     setBackground(Color.white)
@@ -81,15 +81,15 @@ class SplitImageComponent private (source: Either[String, BufferedImage]) extend
     val height: Int = getSize().height
     val splitX = getSplitX
     clear(g2)
-    if (splitX != 0 && mSecondImage != null) {
+    if (splitX != 0 && mSecondImage.isDefined) {
       val firstClip = new Rectangle(splitX, 0, width - splitX, height)
       g2.setClip(firstClip)
     }
-    g2.drawImage(getImage, 0, 0, null)
-    if (splitX == 0 || mSecondImage == null) return
+    mImage.foreach(img => g2.drawImage(img, 0, 0, null))
+    if (splitX == 0 || mSecondImage.isEmpty) return
     val secondClip = new Rectangle(0, 0, splitX, height)
     g2.setClip(secondClip)
-    g2.drawImage(mSecondImage, 0, 0, null)
+    g2.drawImage(mSecondImage.get, 0, 0, null)
     val splitLine = new Line2D.Float(splitX.toFloat, 0f, splitX.toFloat, height.toFloat)
     g2.setClip(null)
     g2.setColor(Color.white)
@@ -105,15 +105,12 @@ class SplitImageComponent private (source: Either[String, BufferedImage]) extend
   }
 
   override def getPreferredSize: Dimension = {
-    var width = 100
-    var height = 100
-    if (getImage != null) {
-      width = getImage.getWidth
-      height = getImage.getHeight
-    }
-    if (mSecondImage != null) {
-      width = Math.max(width, mSecondImage.getWidth)
-      height = Math.max(height, mSecondImage.getHeight)
+    val primary = mImage.map(img => (img.getWidth, img.getHeight)).getOrElse((100, 100))
+    val (width, height) = mSecondImage match {
+      case Some(second) =>
+        (Math.max(primary._1, second.getWidth), Math.max(primary._2, second.getHeight))
+      case None =>
+        primary
     }
     new Dimension(width, height)
   }
