@@ -160,108 +160,93 @@ object ProcessingOperators {
 
   private def registerJHLabsPart1(b: Registry): Unit = {
     b += "Caustics" -> createCausticsOp
-    var params: Seq[AbstractParameter] = Seq(
-      DoubleParameter.createGaussianParameter(1.0, 0.2, 1.8,
-        "height", 0.5, 0.2)
-    )
-    b += "Bumps" -> new MetaImageOp(classOf[BumpFilter], params)
+    b += "Bumps" -> new MetaImageOp(classOf[BumpFilter], Seq(
+      DoubleParameter.createGaussianParameter(1.0, 0.2, 1.8, "height", 0.5, 0.2)
+    ))
     b += "Cellular" -> createCellularOp
     b += "Contour" -> createContourOp
-    params = Seq(
+    b += "Crystallize" -> new MetaImageOp(classOf[CrystallizeFilter], Seq(
       BooleanParameter(false, "fadeEdges", None),
       DoubleParameter(0.4, 0.1, 2.0, "edgeThickness", None),
       IntegerParameter(0xff2200aa, 0xff000000, 0xffffffff, "edgeColor", None)
-    )
-    b += "Crystallize" -> new MetaImageOp(classOf[CrystallizeFilter], params)
-    params = Seq(
+    ))
+    b += "Emboss" -> new MetaImageOp(classOf[EmbossFilter], Seq(
       BooleanParameter(true, "emboss", None),
       DoubleParameter(2.0, 0.0, Math.PI, "azimuth", None),
       DoubleParameter(0.4, 0.0, Math.PI / 2.0, "elevation", None),
       DoubleParameter(0.5, 0.1, 2.5, "bumpHeight", None)
-    )
-    b += "Emboss" -> new MetaImageOp(classOf[EmbossFilter], params)
+    ))
     b += "Equalize" -> new MetaImageOp(new EqualizeFilter)
     b += "Fractal Noise" -> createFractalOp
-    params = Seq(
+    b += "Plasma" -> new MetaImageOp(classOf[PlasmaFilter], Seq(
       BooleanParameter(true, "useImageColors", None),
       DoubleParameter(0.9, 0.01, 2.0, "turbulence", None),
       DoubleParameter(1.0, 0.01, 3.0, "scaling", None)
-    )
-    b += "Plasma" -> new MetaImageOp(classOf[PlasmaFilter], params)
-    params = Seq(
+    ))
+    b += "Polar" -> new MetaImageOp(classOf[PolarFilter], Seq(
       StringParameter(PolarFilter.PolarMappingType.RECT_TO_POLAR.ordinal,
         PolarFilter.PolarMappingType.values.map(_.toString).toIndexedSeq, "type", None),
       StringParameter(EdgeAction.WRAP.ordinal, EdgeAction.values.map(_.toString).toIndexedSeq, "edgeAction", None)
-    )
-    b += "Polar" -> new MetaImageOp(classOf[PolarFilter], params)
-    params = Seq(
+    ))
+    b += "Ripple" -> new MetaImageOp(classOf[RippleFilter], Seq(
       StringParameter(RippleFilter.RippleType.SINE.ordinal,
         RippleFilter.RippleType.values.map(_.toString).toIndexedSeq, "waveType", None),
       DoubleParameter(5.0, 0.0, 10.0, "xAmplitude", None),
       DoubleParameter(0.0, 0.0, 10.0, "yAmplitude", None),
       DoubleParameter(16, 1, 64, "xWavelength", None),
       DoubleParameter(16, 1, 64, "yWavelength", None)
-    )
-    b += "Ripple" -> new MetaImageOp(classOf[RippleFilter], params)
-    params = Seq(
+    ))
+    b += "Diffuse" -> new MetaImageOp(classOf[DiffuseFilter], Seq(
       StringParameter(EdgeAction.WRAP.ordinal, EdgeAction.values.map(_.toString).toIndexedSeq, "edgeAction", None),
       DoubleParameter(2.0, 0.5, 6.0, "scale", None)
-    )
-    b += "Diffuse" -> new MetaImageOp(classOf[DiffuseFilter], params)
-    params = Seq(
+    ))
+    b += "Gamma" -> new MetaImageOp(classOf[GammaFilter], Seq(
       DoubleParameter(1.0, 0.1, 5.0, "redGamma", None),
       DoubleParameter(1.0, 0.1, 5.0, "greenGamma", None),
       DoubleParameter(1.0, 0.1, 5.0, "blueGamma", None)
-    )
-    b += "Gamma" -> new MetaImageOp(classOf[GammaFilter], params)
+    ))
   }
 
   private def registerJHLabsPart2(b: Registry): Unit = {
-    var params: Seq[AbstractParameter] = Seq(
+    b += "Light" -> new MetaImageOp(classOf[LightFilter], Seq(
       StringParameter(LightFilter.BumpShapeType.NONE.ordinal,
         LightFilter.BumpShapeType.values.map(_.toString).toIndexedSeq, "bumpShape", None),
       DoubleParameter(.5, 0.1, 2.0, "bumpHeight", None),
       DoubleParameter(0.0, 0.0, 3.0, "bumpSoftness", None),
       DoubleParameter(10000.0, 10.0, 10000.0, "viewDistance", None)
-    )
-    b += "Light" -> new MetaImageOp(classOf[LightFilter], params)
-    params = Seq(
+    ))
+    b += "Marble" -> new MetaImageOp(classOf[MarbleFilter], Seq(
       DoubleParameter(1.0, 0.8, 5.0, "amount", None),
       DoubleParameter(1.0, 0.5, 16.0, "turbulence", None),
       DoubleParameter(6.0, 1.0, 100.0, "xScale", None),
       DoubleParameter(6.0, 1.0, 100.0, "yScale", None)
-    )
-    b += "Marble" -> new MetaImageOp(classOf[MarbleFilter], params)
-    params = Seq(
+    ))
+    b += "MarbleTexture" -> new MetaImageOp(classOf[MarbleTexFilter], Seq(
       DoubleParameter(1.0, 0.5, 10.0, "turbulence", None),
       DoubleParameter(0.5, 0.1, 5.0, "turbulenceFactor", None),
       DoubleParameter(32.0, 8.0, 128.0, "scale", None),
       DoubleParameter(0.0, 0.0, Math.PI, "angle", None),
       DoubleParameter(1.0, 0.5, 10.0, "stretch", None),
       DoubleParameter(1.0, 0.5, 6.0, "brightness", None)
-    )
-    b += "MarbleTexture" -> new MetaImageOp(classOf[MarbleTexFilter], params)
-    params = Seq(
+    ))
+    b += "Mirror" -> new MetaImageOp(classOf[MirrorFilter], Seq(
       BooleanParameter(true, "useOpacity", None),
       DoubleParameter(1.0, 0.1, 1.0, "opacity", None),
       DoubleParameter(0.5, 0.4, 0.9, "centreY", None)
-    )
-    b += "Mirror" -> new MetaImageOp(classOf[MirrorFilter], params)
-    params = Seq(
+    ))
+    b += "Rays" -> new MetaImageOp(classOf[RaysFilter], Seq(
       BooleanParameter(false, "raysOnly", None),
       DoubleParameter(0.5, 0.1, 1.0, "opacity", None),
       DoubleParameter(0.5, 0.1, 1.0, "threshold", None),
       DoubleParameter(0.5, 0.0, 1.0, "strength", None)
-    )
-    b += "Rays" -> new MetaImageOp(classOf[RaysFilter], params)
-    params = Seq(
+    ))
+    b += "Saturation" -> new MetaImageOp(classOf[SaturationFilter], Seq(
       DoubleParameter(0.5, 0.2, 2.0, "amount", None)
-    )
-    b += "Saturation" -> new MetaImageOp(classOf[SaturationFilter], params)
+    ))
   }
 
   private def registerJHLabsPart3(b: Registry): Unit = {
-    var params: Seq[AbstractParameter] = Seq(
+    b += "Shadow" -> new MetaImageOp(classOf[ShadowFilter], Seq(
       BooleanParameter(false, "shadowOnly", None),
       BooleanParameter(false, "addMargins", None),
       DoubleParameter(0.5, 0.0, 1.0, "opacity", None),
@@ -269,19 +254,16 @@ object ProcessingOperators {
       DoubleParameter(Math.PI * 6 / 4, 0.0, 2 * Math.PI, "angle", None),
       DoubleParameter(5.0, 1.0, 10.0, "distance", None),
       IntegerParameter(0xff220066, 0xff000000, 0xffffffff, "shadowColor", None)
-    )
-    b += "Shadow" -> new MetaImageOp(classOf[ShadowFilter], params)
+    ))
     b += "Kaleidoscope" -> createKaleidoscopeOp
-    params = Seq(
+    b += "Threshold" -> new MetaImageOp(classOf[ThresholdFilter], Seq(
       IntegerParameter(127, 0, 127, "lowerThreshold", None),
       IntegerParameter(127, 127, 255, "upperThreshold", None)
-    )
-    b += "Threshold" -> new MetaImageOp(classOf[ThresholdFilter], params)
-    params = Seq(
+    ))
+    b += "Scale" -> new MetaImageOp(classOf[ScaleFilter], Seq(
       IntegerParameter(40, 8, 1000, "width", None),
       IntegerParameter(40, 8, 1000, "height", None)
-    )
-    b += "Scale" -> new MetaImageOp(classOf[ScaleFilter], params)
+    ))
   }
 }
 
