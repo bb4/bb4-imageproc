@@ -1,6 +1,6 @@
 # bb4-imageproc
 
-📊 [Build status for all bb4 projects](https://github.com/bb4)
+📊 [Build status for all bb4 projects](https://github.com/bb4/.github)
 
 Scala java2D image related demo code.
 
