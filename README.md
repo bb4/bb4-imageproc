@@ -1,4 +1,7 @@
 # bb4-imageproc
+
+📊 [Build status for all bb4 projects](https://github.com/bb4)
+
 Scala java2D image related demo code.
 
 A significant portion of this code in this project comes from "Java 2D Graphics" by Jonathan Knudsen.
