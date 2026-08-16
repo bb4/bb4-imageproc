@@ -14,7 +14,7 @@ bb4 {
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'org.slf4j:slf4j-api:2.0.18'
     implementation 'com.barrybecker4:bb4-optimization:2.1-SNAPSHOT'
     implementation 'com.barrybecker4:bb4-ui:2.1-SNAPSHOT'
     implementation 'com.barrybecker4:bb4-common:2.1-SNAPSHOT'
