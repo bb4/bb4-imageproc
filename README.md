@@ -4,6 +4,9 @@
 
 Scala java2D image related demo code.
 
+### How to Build
+Requires **JDK 25+** (bb4-gradle 2.1). Type `./gradlew build` at the root.
+
 A significant portion of this code in this project comes from "Java 2D Graphics" by Jonathan Knudsen.
 Virtually all of the files in the java2d/examples package come from ftp://ftp.oreilly.com/pub/examples/java/2d.
 The code is originally the work of Jonathan Knudsen. I have only modified and added to it to suit the
