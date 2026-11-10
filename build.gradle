@@ -1,12 +1,12 @@
 plugins {
-   id 'com.barrybecker4.bb4.scala-library' version '2.1-SNAPSHOT'
-   id 'com.barrybecker4.bb4.publish' version '2.1-SNAPSHOT'
-   id 'com.barrybecker4.bb4.application' version '2.1-SNAPSHOT'
+   id 'com.barrybecker4.bb4.scala-library' version '2.1'
+   id 'com.barrybecker4.bb4.publish' version '2.1'
+   id 'com.barrybecker4.bb4.application' version '2.1'
 }
 
 description = 'Scala Java2D library and demos (based on code from Java 2D by J. Knudsen)'
 group = 'com.barrybecker4'
-version = '2.1-SNAPSHOT'
+version = '2.1'
 
 bb4 {
     archivesBaseName.set('bb4-imageproc')
@@ -15,9 +15,9 @@ bb4 {
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.20'
-    implementation 'com.barrybecker4:bb4-optimization:2.1-SNAPSHOT'
-    implementation 'com.barrybecker4:bb4-ui:2.1-SNAPSHOT'
-    implementation 'com.barrybecker4:bb4-common:2.1-SNAPSHOT'
+    implementation 'com.barrybecker4:bb4-optimization:2.1'
+    implementation 'com.barrybecker4:bb4-ui:2.1'
+    implementation 'com.barrybecker4:bb4-common:2.1'
     implementation fileTree(dir: 'lib', include: 'jhlabs-1.0.3.jar')
 }
 
